@@ -1,0 +1,6 @@
+imports:
+    - parameters/%environment%.yml
+
+services:
+    dummy:
+        class: stdClass

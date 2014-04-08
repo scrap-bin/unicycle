@@ -1,0 +1,11 @@
+app/cache
+app/logs
+app/config/parameters/*.yml
+web/uploads
+web/sitemap*.xml
+web/robots.txt
+web/favicon.ico
+.idea
+nbproject
+composer.phar
+composer.lock
