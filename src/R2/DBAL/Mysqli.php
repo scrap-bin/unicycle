@@ -74,7 +74,7 @@ class Mysqli implements DBALInterface
         $this->beginTransaction();
     }
 
-    private $queryParams;
+    private $paramsIn;
 
     /**
      * Callback to bind named parameters
@@ -83,7 +83,7 @@ class Mysqli implements DBALInterface
      */
     private function replace($matches)
     {
-        $var = $this->queryParams[$matches[1]];
+        $var = $this->paramsIn[$matches[1]];
         if (is_string($var)) {
             return "'" . mysqli_real_escape_string($this->link, $var) . "'";
         } elseif (is_array($var)) {
@@ -118,20 +118,23 @@ class Mysqli implements DBALInterface
         if (!isset($this->link)) {
             $this->connect();
         }
-
+        $this->paramsIn = $queryParams;
         if (strpos($sql, ':') !== false) {
             // Special case - table prefix
             $sql = str_replace(':p_', $this->prefix, $sql);
-            // Emulate named parameters in mysqli extension
-            $this->queryParams = $queryParams;
-            $pattern =
-                '/(?:'
-                .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
-                .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
-                .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
-                .')(*SKIP)(*F)|(?:\:)([a-zA-Z][a-zA-Z0-9_]+)/';
-
-            $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
+            // Find placeholders
+            if (strpos($sql, ':') !== false) {
+                // Skip string literals
+                $pattern =
+                    '/(?:'
+                    .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
+                    .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
+                    .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
+                    .')(*SKIP)(*F)'
+                    .'|(?:\:)([a-zA-Z][a-zA-Z0-9_]*)/';
+                // Custom placeholders
+                $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
+            }
         }
         $this->result = mysqli_query($this->link, $sql);
         if ($this->result) {

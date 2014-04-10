@@ -134,14 +134,19 @@ class PDOMySQL implements DBALInterface
         if (strpos($sql, ':') !== false) {
             // Special case - table prefix
             $sql = str_replace(':p_', $this->prefix, $sql);
-            $pattern =
-                '/(?:'
-                .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
-                .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
-                .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
-                .')(*SKIP)(*F)|(?:\:)([a-zA-Z][a-zA-Z0-9_]+)/';
-            // Custom placeholders
-            $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
+            // Find placeholders
+            if (strpos($sql, ':') !== false) {
+                // Skip string literals
+                $pattern =
+                    '/(?:'
+                    .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
+                    .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
+                    .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
+                    .')(*SKIP)(*F)'
+                    .'|(?:\:)([a-zA-Z][a-zA-Z0-9_]*)/';
+                // Custom placeholders
+                $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
+            }
         }
         $this->result = $this->link->prepare($sql);
         foreach ($this->paramsOut as $i => $var) {

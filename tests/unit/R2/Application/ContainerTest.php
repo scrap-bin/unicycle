@@ -45,7 +45,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         // Defined parameter
         $this->assertEquals(1024, $this->container->getParameter('parameters.value'));
-        // Defaule parameter
+        // Default parameter
         $this->assertEquals('production', $this->container->getParameter('parameters.environment'));
     }
 
