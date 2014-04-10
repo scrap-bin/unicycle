@@ -46,14 +46,19 @@ class PDOMySQLTest extends \PHPUnit_Framework_TestCase
         $nameLength = mt_rand(6, 9);
         $randomName = '_';
         for ($i = 1; $i < $nameLength; ++$i) {
-            $randomName = $chars[mt_rand(0, $charsLength - 1)];
+            $randomName .= $chars[mt_rand(0, $charsLength - 1)];
         }
         $time = date('Y-m-d H:i:s');
 
         return self::$dbh->query(
             "INSERT INTO `:p_users` "
            ."(`username`, `password`, `email`, `realname`, `created`, `updated`) VALUES "
-           ."('{$randomName}', SHA1('password'), '{$randomName}@example.com', 'New User', '{$time}', '{$time}')")
+           ."(:name, SHA1('password'), :email, 'New User', :time, :time)",
+            [
+                'name'  => $randomName,
+                'email' => $randomName.'@example.com',
+                'time'  => $time
+            ])
             ->insertId();
     }
 
@@ -67,8 +72,18 @@ class PDOMySQLTest extends \PHPUnit_Framework_TestCase
      */
     public function testQuery()
     {
-        $x = self::$dbh->query("SELECT CURRENT_TIMESTAMP()")->result();
-        $this->assertNotEmpty($x);
+        // Bind simple string
+        $x = self::$dbh->query("SELECT :str", ['str' => 'abcde'])->result();
+        $this->assertEquals('abcde', $x);
+        // Do NOT bind parameter in string literal
+        $num1 = self::$dbh->query("SELECT 1 FROM `:p_users` WHERE `username` = ':list'")->numRows();
+        $this->assertEquals(0, $num1);
+        // Bind integer parameter to LIMIT clause
+        $num2 = self::$dbh->query("SELECT 1 FROM `:p_users` LIMIT :lim", ['lim' => 3])->numRows();
+        $this->assertEquals(3, $num2);
+        // Bind array
+        $num3 = self::$dbh->query("SELECT 1 FROM `:p_users` WHERE `id` IN(:ids)", ['ids' => [1, 2, null]])->numRows();
+        $this->assertEquals(2, $num3);
     }
 
     /**
@@ -141,8 +156,7 @@ class PDOMySQLTest extends \PHPUnit_Framework_TestCase
      */
     public function testNumRows()
     {
-        $num = self::$dbh->query("SELECT 1 FROM `:p_users` WHERE `id` IN (1,2,3)")
-                ->numRows();
+        $num = self::$dbh->query("SELECT 1 FROM `:p_users` WHERE `id` IN (:list)", ['list' => [1, 2, 3]])->numRows();
         $this->assertEquals(3, $num);
     }
 

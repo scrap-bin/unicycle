@@ -86,6 +86,37 @@ class PDOMySQL implements DBALInterface
         $this->beginTransaction();
     }
 
+    private $paramsIn, $paramsOut;
+
+    /**
+     * Callback to bind named parameters
+     * @param  type   $matches
+     * @return string
+     */
+    private function replace($matches)
+    {
+        $var = $this->paramsIn[$matches[1]];
+        if (is_null($var) || (is_array($var) && count($var) == 0)) {
+            return 'NULL';
+        } elseif (is_array($var)) {
+            $tmp = [];
+            foreach ($var as $item) {
+                if (is_null($item)) {
+                    $tmp[] = 'NULL';
+                } else {
+                    $this->paramsOut[] = $item;
+                    $tmp[] = '?';
+                }
+            }
+
+            return implode(',', $tmp);
+        }
+
+        $this->paramsOut[] = $var;
+
+        return '?';
+    }
+
     /**
      * Execute DB query.
      * @param  string            $sql         query text
@@ -98,9 +129,24 @@ class PDOMySQL implements DBALInterface
         if (!isset($this->link)) {
             $this->connect();
         }
-        $sql = str_replace(':p_', $this->prefix, $sql);
-        //...
+        $this->paramsIn = $queryParams;
+        $this->paramsOut = [];
+        if (strpos($sql, ':') !== false) {
+            // Special case - table prefix
+            $sql = str_replace(':p_', $this->prefix, $sql);
+            $pattern =
+                '/(?:'
+                .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
+                .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
+                .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
+                .')(*SKIP)(*F)|(?:\:)([a-zA-Z][a-zA-Z0-9_]+)/';
+            // Custom placeholders
+            $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
+        }
         $this->result = $this->link->prepare($sql);
+        foreach ($this->paramsOut as $i => $var) {
+            $this->result->bindValue($i + 1, $var, is_integer($var) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
         $this->result->execute();
 
         return $this;

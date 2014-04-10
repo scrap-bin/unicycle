@@ -21,7 +21,7 @@ if (PHP_SAPI === 'cli') {
 }
 
 switch ($command) {
-case 'dbal:schema:create': 
+case 'dbal:schema:create':
 case 'dbal:schema:update':
     dropSchema($options, $arguments);
     createSchema($options, $arguments);

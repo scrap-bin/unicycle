@@ -74,10 +74,41 @@ class Mysqli implements DBALInterface
         $this->beginTransaction();
     }
 
+    private $queryParams;
+
+    /**
+     * Callback to bind named parameters
+     * @param  type   $matches
+     * @return string
+     */
+    private function replace($matches)
+    {
+        $var = $this->queryParams[$matches[1]];
+        if (is_string($var)) {
+            return "'" . mysqli_real_escape_string($this->link, $var) . "'";
+        } elseif (is_array($var)) {
+            $tmp = [];
+            foreach ($var as $item) {
+                if (is_string($item)) {
+                    $tmp[] = "'" . mysqli_real_escape_string($this->link, $item) . "'";
+                } elseif (is_null($item)) {
+                    $tmp[] = 'null';
+                } else {
+                    $tmp[] = $item;
+                }
+            }
+            $var = implode(',', $tmp);
+        } elseif (is_null($var)) {
+            return 'null';
+        }
+
+        return $var;
+    }
+
     /**
      * Execute DB query.
      * @param  string          $sql         query text
-     * @param  array           $queryParams named parameters, like [':name' => $value]
+     * @param  array           $queryParams named parameters, like ['name' => $value]
      * @return \R2\DBAL\Mysqli This object
      * @throws \Exception
      */
@@ -89,9 +120,18 @@ class Mysqli implements DBALInterface
         }
 
         if (strpos($sql, ':') !== false) {
+            // Special case - table prefix
+            $sql = str_replace(':p_', $this->prefix, $sql);
             // Emulate named parameters in mysqli extension
             $this->queryParams = $queryParams;
-            $sql = preg_replace_callback('/(\:[a-zA-Z0-9_]+)/', [$this, 'replace'], $sql);
+            $pattern =
+                '/(?:'
+                .   "'[^'\\\\]*(?:(?:\\\\.|'')[^'\\\\]*)*'"
+                .  '|"[^"\\\\]*(?:(?:\\\\.|"")[^"\\\\]*)*"'
+                .  '|`[^`\\\\]*(?:(?:\\\\.|``)[^`\\\\]*)*`'
+                .')(*SKIP)(*F)|(?:\:)([a-zA-Z][a-zA-Z0-9_]+)/';
+
+            $sql = preg_replace_callback($pattern, [$this, 'replace'], $sql);
         }
         $this->result = mysqli_query($this->link, $sql);
         if ($this->result) {
@@ -134,42 +174,6 @@ class Mysqli implements DBALInterface
         if (isset($this->link)) {
             mysqli_rollback($this->link);
         }
-    }
-
-    private $queryParams;
-
-    /**
-     * Callback to bind named parameters
-     * @param  type   $matches
-     * @return string
-     */
-    private function replace($matches)
-    {
-        $name = $matches[1];
-        // Special case - table prefix
-        if (strpos($name, ':p_') === 0) {
-            return str_replace(':p_', $this->prefix, $name);
-        }
-        $var = $this->queryParams[$name];
-        if (is_string($var)) {
-            return "'" . mysqli_real_escape_string($this->link, $var) . "'";
-        } elseif (is_array($var)) {
-            $tmp = [];
-            foreach ($var as $item) {
-                if (is_string($item)) {
-                    $tmp[] = "'" . mysqli_real_escape_string($this->link, $item) . "'";
-                } elseif (is_null($item)) {
-                    $tmp[] = 'null';
-                } else {
-                    $tmp[] = $item;
-                }
-            }
-            $var = implode(',', $tmp);
-        } elseif (is_null($var)) {
-            return 'null';
-        }
-
-        return $var;
     }
 
     /**
