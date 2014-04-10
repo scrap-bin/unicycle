@@ -17,16 +17,12 @@ if (PHP_SAPI === 'cli') {
     array_shift($arguments);            // argv[0] is a script name itself
     $command = array_shift($arguments); // argv[1] is a command, all the rest is command arguments
 } else {
-    die('*** This script is for CLI only!');
+    exit('*** This script is for CLI only!');
 }
 
-//echo 'env: '.var_export($options['env'], true)."\n";
-//echo 'command: '.var_export($command, true)."\n";
-//echo 'arguments: '.var_export($arguments, true)."\n";
-//echo "----------------------------\n\n";
-
 switch ($command) {
-case 'dbal:schema:create': case 'dbal:schema:update':
+case 'dbal:schema:create': 
+case 'dbal:schema:update':
     dropSchema($options, $arguments);
     createSchema($options, $arguments);
     exit(0);
@@ -35,20 +31,22 @@ case 'dbal:schema:drop':
     exit(0);
 }
 
-die("Unicycle console util\n"
-  . "\n"
-  . "Usage:\n"
-  . "  [options] command [arguments]\n"
-  . "\n"
-  . "Options:\n"
-  . "  --env  The environment name. Default: production\n"
-  . "\n"
-  . "Available commands:\n"
-  . "dbal\n"
-  . "  dbal:schema:create     The same as dbal:schema:update\n"
-  . "  dbal:schema:drop       Drop all tables in schema\n"
-  . "  dbal:schema:update     Drop all tables than create new from predefined sql\n"
-);
+?>
+Unicycle console utility
+
+Usage:
+  console [options] command [arguments]
+
+Options:
+  --env  The environment name. Default: production
+
+Available commands:
+dbal
+  dbal:schema:create     The same as dbal:schema:update
+  dbal:schema:drop       Drop all tables in schema
+  dbal:schema:update     Drop all tables than create new from predefined sql
+<?php
+exit(0);
 
 function loadParams($environment)
 {
@@ -57,7 +55,8 @@ function loadParams($environment)
     try {
         $data = $loader->load($resource)['parameters'];
     } catch (\Exception $ex) {
-        die("*** Cannot load parameters for environment \"{$environment}\"");
+        fwrite(STDERR, "*** Cannot load parameters for environment \"{$environment}\"\n");
+        exit(1);
     }
 
     return $data;
@@ -77,7 +76,8 @@ function dropSchema($options, $arguments)
         }
         $dbh->commit();
     } catch (\Exception $ex) {
-        die("Database error:\n".$ex->getMessage());
+        fwrite(STDERR, "*** Database error:\n".$ex->getMessage()."\n");
+        exit(1);
     }
 
     echo "Schema dropped\n";
@@ -104,7 +104,8 @@ function createSchema($options, $arguments)
 
         $dbh->commit();
     } catch (\Exception $ex) {
-        die("Database error:\n".$ex->getMessage());
+        fwrite(STDERR, "*** Database error:\n".$ex->getMessage()."\n");
+        exit(1);
     }
 
     echo "Schema created\n";
