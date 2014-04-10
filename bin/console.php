@@ -10,12 +10,14 @@ if (PHP_SAPI === 'cli') {
     $defaults = [
         'env' => 'production',
     ];
+    // Drop wrong keys and set defaults
     $options = array_intersect_key(getopt($shortOpts, $longOpts), $defaults) + $defaults;
+    // All except keys, are command and its arguments
     $arguments = array_filter($argv, function ($x) { return $x{0} != '-'; });
-    array_shift($arguments);
-    $command = explode(':', array_shift($arguments));
+    array_shift($arguments);            // argv[0] is a script name itself
+    $command = array_shift($arguments); // argv[1] is a command, all the rest is command arguments
 } else {
-    throw new \Exception('This file is for CLI only');
+    die('*** This script is for CLI only!');
 }
 
 //echo 'env: '.var_export($options['env'], true)."\n";
@@ -23,26 +25,14 @@ if (PHP_SAPI === 'cli') {
 //echo 'arguments: '.var_export($arguments, true)."\n";
 //echo "----------------------------\n\n";
 
-if (count($command) == 3) {
-    switch ($command[0]) {
-    case 'dbal':
-        switch ($command[1]) {
-        case 'schema':
-            switch ($command[2]) {
-            case 'create': case 'update':
-                dropSchema($options, $arguments);
-                createSchema($options, $arguments);
-                exit(0);
-            case 'drop':
-                dropSchema($options, $arguments);
-                exit(0);
-            }
-            break;
-        // ...
-        }
-        break;
-    // ...
-    }
+switch ($command) {
+case 'dbal:schema:create': case 'dbal:schema:update':
+    dropSchema($options, $arguments);
+    createSchema($options, $arguments);
+    exit(0);
+case 'dbal:schema:drop':
+    dropSchema($options, $arguments);
+    exit(0);
 }
 
 die("Unicycle console util\n"

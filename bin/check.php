@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 echo 'PHP version ...... '.(version_compare(PHP_VERSION, '5.4', '>=') ? 'OK' : 'ERROR')."\n";
