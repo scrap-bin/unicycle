@@ -1,2 +1,12 @@
 parameters:
     debug: false
+
+    db_params:
+        host:         localhost
+        username:     root
+        password:     ~
+        name:         ~
+        dbname:       test
+        prefix:       test_
+        socket:       ~
+        persistent:   false
