@@ -11,14 +11,5 @@ spl_autoload_register(function ($class) {
 
 // if PECL YAML not intalled:
 if (!function_exists('yaml_parse_file')) {
-
-    function yaml_parse($input)
-    {
-        return (new \fallback\Yaml())->loadString($input);
-    }
-
-    function yaml_parse_file($file)
-    {
-        return (new \fallback\Yaml())->loadFile($file);
-    }
+    include __DIR__.'/fix_yaml.php';
 }
