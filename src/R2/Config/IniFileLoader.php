@@ -33,7 +33,9 @@ class IniFileLoader implements FileLoaderInterface
         foreach ($tmp as $section => $values) {
             $x =& $result;
             foreach (explode('.', $section) as $s) {
-                if (!array_key_exists($s, $x)) $x[$s] = [];
+                if (!array_key_exists($s, $x)) {
+                    $x[$s] = [];
+                }
                 $x =& $x[$s];
             }
             $x = $values;

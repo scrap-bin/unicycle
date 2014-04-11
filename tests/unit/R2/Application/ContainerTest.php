@@ -92,13 +92,3 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($service1, $service2);
     }
 }
-
-class ServiceMock
-{
-    public $arg;
-
-    public function __construct($arg)
-    {
-        $this->arg = $arg;
-    }
-}

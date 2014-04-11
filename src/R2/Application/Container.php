@@ -59,8 +59,9 @@ class Container implements ContainerInterface, ServiceFactoryInterface
             }
         }
         $this->properties = array_replace_recursive(
-          $this->properties,
-          $parameters);
+            $this->properties,
+            $parameters
+        );
     }
 
     /**
@@ -91,7 +92,9 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     public function get($name)
     {
 
-        if (array_key_exists($name, $this->shared)) { return $this->shared[$name]; }
+        if (array_key_exists($name, $this->shared)) {
+            return $this->shared[$name];
+        }
 
         $config = $this->properties['services'][$name];
         $definition = [
@@ -122,7 +125,10 @@ class Container implements ContainerInterface, ServiceFactoryInterface
         ];
 
         if (isset($definition['method'])) {
-            return call_user_func_array([$definition['factory_service'], $definition['method']], $definition['arguments']);
+            return \call_user_func_array(
+                [$definition['factory_service'], $definition['method']],
+                $definition['arguments']
+            );
         } else {
             return $definition['factory_service']->$definition['factory_method']($name, $definition);
         }
@@ -208,7 +214,9 @@ class Container implements ContainerInterface, ServiceFactoryInterface
         } elseif (is_string($value) && strpos($value, '@') === 0) {
             return $this->get(substr($value, 1));
         } elseif (is_array($value)) {
-            foreach ($value as &$v) $v = $this->resolve($v);
+            foreach ($value as &$v) {
+                $v = $this->resolve($v);
+            }
         }
 
         return $value;
@@ -245,13 +253,21 @@ class Container implements ContainerInterface, ServiceFactoryInterface
         }
         $args = $definition['arguments'];
         switch (count($args)) {
-        case 0: $service = new $class(); break;
-        case 1: $service = new $class($args[0]); break;
-        case 2: $service = new $class($args[0], $args[1]); break;
-        case 3: $service = new $class($args[0], $args[1], $args[2]); break;
-        default:
-            $r = new \ReflectionClass($class);
-            $service = $r->newInstanceArgs($args);
+            case 0:
+                $service = new $class();
+                break;
+            case 1:
+                $service = new $class($args[0]);
+                break;
+            case 2:
+                $service = new $class($args[0], $args[1]);
+                break;
+            case 3:
+                $service = new $class($args[0], $args[1], $args[2]);
+                break;
+            default:
+                $r = new \ReflectionClass($class);
+                $service = $r->newInstanceArgs($args);
         }
 
         if (!empty($definition['settings'])) {

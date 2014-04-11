@@ -86,7 +86,8 @@ class PDOMySQL implements DBALInterface
         $this->beginTransaction();
     }
 
-    private $paramsIn, $paramsOut;
+    private $paramsIn;
+    private $paramsOut;
 
     /**
      * Callback to bind named parameters

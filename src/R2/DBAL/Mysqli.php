@@ -7,8 +7,18 @@ namespace R2\DBAL;
  */
 class Mysqli implements DBALInterface
 {
-    private $host, $persistent, $username, $password, $dbname;
-    private $prefix, $link, $result, $inTransaction, $log;
+    /** @var \Mysqli */
+    private $link;
+    /** @var \Mysqli_Result */
+    private $result;
+    private $host;
+    private $dbname;
+    private $inTransaction;
+    private $persistent;
+    private $username;
+    private $password;
+    private $prefix;
+    private $log;
 
     /**
      * Constructor.
@@ -64,8 +74,13 @@ class Mysqli implements DBALInterface
         if (strpos($this->host, ':') !== false) {
             list($this->host, $port) = explode(':', $this->host);
         }
-        $this->link = @mysqli_connect(($this->persistent ? 'p:' : '').$this->host,
-                      $this->username, $this->password, $this->dbname, $port);
+        $this->link = mysqli_connect(
+            ($this->persistent ? 'p:' : '').$this->host,
+            $this->username,
+            $this->password,
+            $this->dbname,
+            $port
+        );
         if (!$this->link) {
             throw new \Exception('Unable to connect database');
         }

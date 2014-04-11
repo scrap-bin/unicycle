@@ -3,7 +3,7 @@
 require __DIR__.'/../src/bootstrap.php';
 
 spl_autoload_register(function ($class) {
-    $prefix = 'Tests\\';
+    $prefix = 'unit\\';
     $base_dir = __DIR__.'/unit';
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) === 0) {

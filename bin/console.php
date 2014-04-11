@@ -13,7 +13,12 @@ if (PHP_SAPI === 'cli') {
     // Drop wrong keys and set defaults
     $options = array_intersect_key(getopt($shortOpts, $longOpts), $defaults) + $defaults;
     // All except keys, are command and its arguments
-    $arguments = array_filter($argv, function ($x) { return $x{0} != '-'; });
+    $arguments = array_filter(
+        $argv,
+        function ($x) {
+            return $x{0} != '-';
+        }
+    );
     array_shift($arguments);            // argv[0] is a script name itself
     $command = array_shift($arguments); // argv[1] is a command, all the rest is command arguments
 } else {
@@ -21,14 +26,14 @@ if (PHP_SAPI === 'cli') {
 }
 
 switch ($command) {
-case 'dbal:schema:create':
-case 'dbal:schema:update':
-    dropSchema($options, $arguments);
-    createSchema($options, $arguments);
-    exit(0);
-case 'dbal:schema:drop':
-    dropSchema($options, $arguments);
-    exit(0);
+    case 'dbal:schema:create':
+    case 'dbal:schema:update':
+        dropSchema($options, $arguments);
+        createSchema($options, $arguments);
+        exit(0);
+    case 'dbal:schema:drop':
+        dropSchema($options, $arguments);
+        exit(0);
 }
 
 ?>

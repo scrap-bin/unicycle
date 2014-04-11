@@ -32,7 +32,9 @@ class CachedFileLoader extends SerializedFileLoader
     {
         if (is_string($resource)) {
             foreach ($this->loaders as $loader) {
-                if ($loader->supports($resource)) { return true; }
+                if ($loader->supports($resource)) {
+                    return true;
+                }
             }
         }
 
