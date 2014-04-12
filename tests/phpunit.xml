@@ -11,11 +11,11 @@
     processIsolation            = "false"
     stopOnFailure               = "false"
     syntaxCheck                 = "false"
-    bootstrap                   = "../tests/bootstrap.php" >
+    bootstrap                   = "./bootstrap.php" >
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>../tests</directory>
+            <directory>./unit</directory>
         </testsuite>
     </testsuites>
 
