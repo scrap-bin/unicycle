@@ -2,13 +2,15 @@
 
 namespace R2\Config;
 
-use InvalidArgumentException as ArgsException;
+use InvalidArgumentException;
 
 class JsonFileLoader implements FileLoaderInterface
 {
     /**
-     * Check if such file type is supported
+     * Checks if such file type is supported.
+     * 
      * @param  string  $resource
+     * 
      * @return Boolean
      */
     public function supports($resource)
@@ -18,14 +20,16 @@ class JsonFileLoader implements FileLoaderInterface
 
     /**
      * Loads data.
-     * @param  string                    $resource The filename
+     *
+     * @param  string $resource The filename
      * @return mixed
-     * @throws \InvalidArgumentException
+     *
+     * @throws InvalidArgumentException
      */
     public function load($resource)
     {
         if (!file_exists($resource)) {
-            throw new ArgsException('Resource not found');
+            throw new InvalidArgumentException('Resource not found');
         }
 
         return json_decode(file_get_contents($resource), true);

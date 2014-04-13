@@ -69,6 +69,11 @@ $ php bin/console.php --env=test dbal:schema:update
 Schema dropped
 Schema created
 ```
+Загрузка тестовых даных:
+```bash
+$ php bin/console.php --env=test dbal:fixtures:load
+Fixtures loaded
+```
 В примере показана работа с окружением `test` — его параметры должны быть прописаны в 
 `app/config/parameters/test.yml`.
 

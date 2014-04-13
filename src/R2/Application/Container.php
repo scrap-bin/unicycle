@@ -5,7 +5,7 @@ namespace R2\Application;
 use R2\DependencyInjection\ContainerInterface;
 use R2\DependencyInjection\ServiceFactoryInterface;
 use R2\Config\FileLoaderInterface;
-use InvalidArgumentException as ArgsException;
+use InvalidArgumentException;
 
 /**
  * Application-specific container
@@ -150,9 +150,11 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     /**
      * Get configuration parameter
      * Use dots to access nested item. For ex. "services.foo.tags"
-     * @param  string        $name
+     *
+     * @param string $name
+     *
      * @return mixed
-     * @throws ArgsException
+     * @throws InvalidArgumentException
      */
     public function getParameter($name)
     {
@@ -160,7 +162,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
         $ptr =& $this->properties;
         foreach ($segments as $s) {
             if (!array_key_exists($s, $ptr)) {
-                throw new ArgsException("Missing \"{$s}\" in the path \"{$name}\"");
+                throw new InvalidArgumentException("Missing \"{$s}\" in the path \"{$name}\"");
             }
             $ptr =& $ptr[$s];
         }
@@ -170,9 +172,12 @@ class Container implements ContainerInterface, ServiceFactoryInterface
 
     /**
      * Set configuration parameter
-     * @param  string    $name
-     * @param  mixed     $value
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
      * @return Container
+     * @throws InvalidArgumentException
      */
     public function setParameter($name, $value)
     {
@@ -184,7 +189,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
                 if (!array_key_exists($s, $ptr)) {
                     $ptr[$s] = [];
                 } elseif (!is_array($ptr[$s])) {
-                    throw new ArgsException("Scalar \"{$s}\" in the path \"{$name}\"");
+                    throw new InvalidArgumentException("Scalar \"{$s}\" in the path \"{$name}\"");
                 }
                 $ptr =& $ptr[$s];
             } else {
@@ -240,16 +245,18 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     /**
      * The default case of creational method (for service factory)
      * Produces new instance in every call
-     * @param  string        $name
-     * @param  array         $definition
+     *
+     * @param string $name
+     * @param array  $definition
+     *
      * @return object
-     * @throws ArgsException
+     * @throws InvalidArgumentException
      */
     public function createService($name, $definition)
     {
         $class = $definition['class'];
         if (!isset($class)) {
-            throw new ArgsException("Class name required");
+            throw new InvalidArgumentException("Class name required");
         }
         $args = $definition['arguments'];
         switch (count($args)) {
@@ -282,10 +289,12 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     /**
      * The case of creational method (for service factory)
      * Produces single instance
-     * @param  string        $name
-     * @param  array         $definition
+     *
+     * @param string $name
+     * @param array  $definition
+     *
      * @return object
-     * @throws ArgsException
+     * @throws InvalidArgumentException
      */
     public function createSharedService($name, $definition)
     {
