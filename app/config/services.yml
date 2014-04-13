@@ -1,0 +1,9 @@
+services:
+    db:
+        class: "%dbal_class%"
+        arguments:
+            - "%db_params%"
+
+    entity_manager:
+        class: R2\ORM\EntityManager
+        arguments: [ "@db" ]

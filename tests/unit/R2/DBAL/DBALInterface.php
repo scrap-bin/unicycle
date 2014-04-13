@@ -2,6 +2,10 @@
 
 namespace unit\R2\DBAL;
 
+use R2\Application\Container;
+use R2\Config\YamlFileLoader;
+use R2\Application\Command\DBALCommand;
+
 class DBALInterface extends \PHPUnit_Framework_TestCase
 {
     /** @var \R2\DBAL\DBALInterface */
@@ -9,12 +13,16 @@ class DBALInterface extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $resource = __DIR__.'/../../../../app/config/parameters/test.yml';
-        $loader = new \R2\Config\YamlFileLoader();
-        $dbParams = $loader->load($resource)['parameters']['db_params'];
+        $config = __DIR__.'/../../../../app/config/config.yml';
+        $container = new Container(new YamlFileLoader(), $config, 'test');
+        (new DBALCommand())
+            ->setContainer($container)
+            ->dropSchema()
+            ->createSchema()
+            ->loadFixtures();
         // Compute class name and check if it DBALInterface
         $class = 'R2\\DBAL'.\substr(\strrchr(\get_called_class(), '\\'), 0, -4);
-        self::$dbh = new $class($dbParams);
+        self::$dbh = new $class($container->getParameter('parameters.db_params'));
         if (!is_a(self::$dbh, 'R2\\DBAL\\DBALInterface')) {
             throw new \Exception("Class {$class} is not DBALInterface");
         }

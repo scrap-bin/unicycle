@@ -12,9 +12,11 @@ class Controller implements ContainerAwareInterface
 
     /**
      * Sets the Container associated with this Controller.
-     * @param ContainerInterface $container A ContainerInterface instance
+     * Provides a fluent interface.
      *
-     * @return object Provides a fluent interface
+     * @param ContainerInterface $container
+     *
+     * @return Controller
      */
     public function setContainer(ContainerInterface $container)
     {

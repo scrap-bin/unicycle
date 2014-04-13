@@ -192,7 +192,7 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * Adds support for magic finders and persisters.
-     * You can omit getRepository() in some cases.
+     * You can omit getRepository() or getConnection() in some cases.
      *
      * @param type $method
      * @param type $arguments
@@ -202,25 +202,27 @@ class EntityManager implements EntityManagerInterface
      */
     public function __call($method, $arguments)
     {
-        if (in_array($method, ['persist', 'remove', 'refresh', 'load', 'unload'])) {
-            $entity = $arguments[0];
+        if (in_array($method, ['result', 'fetchAssoc', 'fetchAssocAll', 'fetchRow',
+            'numRows', 'affectedRows', 'insertId'])) {
+            $object = $this->db;
+        } elseif (in_array($method, ['persist', 'remove', 'refresh', 'load', 'unload'])) {
+            $object = $this->getRepository($arguments[0]);
         } elseif (0 === strpos($method, 'find')) {
-            $entity = array_shift($arguments);
+            $object = $this->getRepository(array_shift($arguments));
         }
-        if (isset($entity)) {
-            $repository = $this->getRepository($entity);
-            if (method_exists($repository, $method)) {
+        if (isset($object)) {
+            if (method_exists($object, $method)) {
                 switch (count($arguments)) {
                     case 0:
-                        return $repository->$method();
+                        return $object->$method();
                     case 1:
-                        return $repository->$method($arguments[0]);
+                        return $object->$method($arguments[0]);
                     case 2:
-                        return $repository->$method($arguments[0], $arguments[1]);
+                        return $object->$method($arguments[0], $arguments[1]);
                     case 3:
-                        return $repository->$method($arguments[0], $arguments[1], $arguments[2]);
+                        return $object->$method($arguments[0], $arguments[1], $arguments[2]);
                     default:
-                        return call_user_func_array([$repository, $method], $arguments);
+                        return call_user_func_array([$object, $method], $arguments);
                 }
             }
         }

@@ -2,6 +2,8 @@
 
 namespace R2\DBAL;
 
+use Exception;
+
 class PDOMySQL implements DBALInterface
 {
     /** @var \PDO */
@@ -17,8 +19,8 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Constructor.
-     * @param  array      $config
-     * @throws \Exception
+     *
+     * @param array $config Configuration parameters
      */
     public function __construct(array $config = [])
     {
@@ -72,7 +74,8 @@ class PDOMySQL implements DBALInterface
 
     /**
      * (Lazy) connect.
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     private function connect()
     {
@@ -91,7 +94,9 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Callback to bind named parameters
-     * @param  type   $matches
+     *
+     * @param type $matches preg_matched values
+     *
      * @return string
      */
     private function replace($matches)
@@ -120,10 +125,13 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Execute DB query.
-     * @param  string            $sql         query text
-     * @param  array             $queryParams named parameters, like [':name' => $value]
-     * @return \R2\DBAL\PDOMySQL This object
-     * @throws \Exception
+     * Provides a fluent interface.
+     *
+     * @param string $sql         Query text
+     * @param array  $queryParams Named parameters, like ['name' => $value]
+     *
+     * @return PDOMySQL
+     * @throws Exception
      */
     public function query($sql, array $queryParams = [])
     {
@@ -160,6 +168,9 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Begin transaction.
+     * Provides a fluent interface.
+     *
+     * @return PDOMySQL
      */
     public function beginTransaction()
     {
@@ -167,32 +178,46 @@ class PDOMySQL implements DBALInterface
         if (isset($this->link)) {
             $this->link->beginTransaction();
         }
+
+        return $this;
     }
 
     /**
      * Commit.
+     * Provides a fluent interface.
+     *
+     * @return PDOMySQL
      */
     public function commit()
     {
         if (isset($this->link) && $this->link->inTransaction()) {
             $this->link->commit();
         }
+
+        return $this;
     }
 
     /**
      * Rollback.
+     * Provides a fluent interface.
+     *
+     * @return PDOMySQL
      */
     public function rollback()
     {
         if (isset($this->link) && $this->link->inTransaction()) {
             $this->link->rollBack();
         }
+
+        return $this;
     }
 
     /**
      * Fetches single value.
-     * @param  int          $row
-     * @param  int          $col
+     *
+     * @param int $row
+     * @param int $col
+     *
      * @return string|false
      */
     public function result($row = 0, $col = 0)
@@ -210,6 +235,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Gets a result row as an associative array.
+     *
      * @return array|false
      */
     public function fetchAssoc()
@@ -219,6 +245,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Gets result rows where each row is an associative array.
+     *
      * @return array|false
      */
     public function fetchAssocAll()
@@ -228,6 +255,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Gets a result row as an enumerated array.
+     *
      * @return array|false
      */
     public function fetchRow()
@@ -237,6 +265,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Gets the number of rows in a result.
+     *
      * @return int|false
      */
     public function numRows()
@@ -247,6 +276,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Gets the number of affected rows in a previous operation.
+     *
      * @return int|false
      */
     public function affectedRows()
@@ -256,6 +286,7 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Returns the auto generated id used in the last query.
+     *
      * @return int|false
      */
     public function insertId()
@@ -266,7 +297,9 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Frees the memory associated with a result.
-     * @return \R2\DBAL\PDOMySQL This object
+     * Provides a fluent interface.
+     *
+     * @return PDOMySQL
      */
     public function freeResult()
     {
@@ -280,7 +313,9 @@ class PDOMySQL implements DBALInterface
 
     /**
      * Closes DB connection.
-     * @return R2\DBAL\PDOMySQL This object
+     * Provides a fluent interface.
+     *
+     * @return PDOMySQL
      */
     public function close()
     {

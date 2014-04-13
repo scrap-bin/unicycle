@@ -1,6 +1,8 @@
 parameters:
     debug: false
 
+    dbal_class: R2\DBAL\PDOMySQL
+    
     db_params:
         host:         localhost
         username:     root

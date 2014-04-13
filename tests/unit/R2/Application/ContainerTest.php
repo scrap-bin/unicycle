@@ -14,7 +14,18 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $resource = [
             'parameters' => [
-                'value' => 1024,
+                'debug' => true,
+                'dbal_class' => 'unit\\R2\\Application\\ServiceMock',
+                'db_params' => [
+                    'host'        => 'localhost',
+                    'username'    => 'xuser',
+                    'password'    => 'xpassword',
+                    'name'        => 'xname',
+                    'dbname'      => 'xdbname',
+                    'prefix'      => 'x_',
+                    'socket'      => null,
+                    'persistent'  => false,
+                ],
             ],
             'services' => [
                 'my_service' => [
@@ -23,9 +34,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                     'arguments' => ['foo'],
                 ],
                 'my_shared_service' => [
-                    'class' => 'unit\\R2\\Application\\ServiceMock',
+                    'class' => '%dbal_class%',
                     // defaults: 'factory_method' => 'createSharedService',
-                    'arguments' => ['bar'],
+                    'arguments' => ['%db_params%'],
                 ]
             ]
         ];
@@ -44,9 +55,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     public function testGetParameter()
     {
         // Defined parameter
-        $this->assertEquals(1024, $this->container->getParameter('parameters.value'));
+        $this->assertEquals('array', gettype($this->container->getParameter('parameters.db_params')));
         // Default parameter
-        $this->assertEquals('production', $this->container->getParameter('parameters.environment'));
+        $this->assertEquals(true, $this->container->getParameter('parameters.debug'));
     }
 
     /**
@@ -74,9 +85,11 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($service1, $service2);
         // Shared service
         $service3 = $this->container->get('my_shared_service');
-        $this->assertEquals('bar', $service3->arg);
+        $this->assertEquals('array', gettype($service3->arg));
         $service4 = $this->container->get('my_shared_service');
         $this->assertSame($service3, $service4);
+        // Misc
+        $this->assertEquals('xuser', $service3->arg['username']);
     }
 
     /**

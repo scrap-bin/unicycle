@@ -41,7 +41,7 @@ class YamlFileLoaderTest extends \PHPUnit_Framework_TestCase
 general:
     alfa: 1
 section:
-    beta: ololo
+    beta: [1, 2, 3]
     subsection:
         gamma: false
 EOT;
@@ -50,7 +50,7 @@ EOT;
                 'alfa' => 1
             ],
             'section' => [
-                'beta' => 'ololo',
+                'beta' => [1, 2, 3],
                 'subsection' => [
                     'gamma' => false
                 ]

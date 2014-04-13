@@ -2,8 +2,10 @@
 
 namespace R2\DBAL;
 
+use Exception;
+
 /**
- * Interface to MySQL (mysqli extension)
+ * DataBase Abstraction Level. Interface to PHP mysqli extension.
  */
 class Mysqli implements DBALInterface
 {
@@ -22,8 +24,8 @@ class Mysqli implements DBALInterface
 
     /**
      * Constructor.
-     * @param  array      $config
-     * @throws \Exception
+     *
+     * @param array $config Configuration parameters
      */
     public function __construct(array $config = [])
     {
@@ -65,7 +67,8 @@ class Mysqli implements DBALInterface
 
     /**
      * (Lazy) connect.
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     private function connect()
     {
@@ -82,7 +85,7 @@ class Mysqli implements DBALInterface
             $port
         );
         if (!$this->link) {
-            throw new \Exception('Unable to connect database');
+            throw new Exception('Unable to connect database');
         }
         mysqli_autocommit($this->link, false);   // in general, we need one commit over page
         mysqli_set_charset($this->link, 'utf8'); // must have to correct mysqli_real_escape_string!
@@ -93,7 +96,9 @@ class Mysqli implements DBALInterface
 
     /**
      * Callback to bind named parameters
-     * @param  type   $matches
+     *
+     * @param type $matches preg_matched values
+     *
      * @return string
      */
     private function replace($matches)
@@ -122,12 +127,15 @@ class Mysqli implements DBALInterface
 
     /**
      * Execute DB query.
-     * @param  string          $sql         query text
-     * @param  array           $queryParams named parameters, like ['name' => $value]
-     * @return \R2\DBAL\Mysqli This object
-     * @throws \Exception
+     * Provides a fluent interface.
+     *
+     * @param string $sql         Query text
+     * @param array  $queryParams Named parameters, like ['name' => $value]
+     *
+     * @return Mysqli
+     * @throws Exception
      */
-    public function query($sql, array $queryParams = null)
+    public function query($sql, array $queryParams = [])
     {
         // Lazy connection
         if (!isset($this->link)) {
@@ -156,12 +164,15 @@ class Mysqli implements DBALInterface
             return $this;
         } else {
             $this->rollback();
-            throw new \Exception("Error in query\n".mysqli_error($this->link)."\n".$sql);
+            throw new Exception("Error in query\n".mysqli_error($this->link)."\n".$sql);
         }
     }
 
     /**
      * Begin transaction.
+     * Provides a fluent interface.
+     *
+     * @return Mysqli
      */
     public function beginTransaction()
     {
@@ -170,10 +181,15 @@ class Mysqli implements DBALInterface
             // is it necessary after mysqli_autocommit($this->link, false) ?
             mysqli_query($this->link, "START TRANSACTION");
         }
+
+        return $this;
     }
 
     /**
      * Commit.
+     * Provides a fluent interface.
+     *
+     * @return Mysqli
      */
     public function commit()
     {
@@ -181,10 +197,15 @@ class Mysqli implements DBALInterface
         if (isset($this->link)) {
             mysqli_commit($this->link);
         }
+
+        return $this;
     }
 
     /**
      * Rollback.
+     * Provides a fluent interface.
+     *
+     * @return Mysqli
      */
     public function rollback()
     {
@@ -192,12 +213,16 @@ class Mysqli implements DBALInterface
         if (isset($this->link)) {
             mysqli_rollback($this->link);
         }
+
+        return $this;
     }
 
     /**
      * Fetches single value.
-     * @param  int          $row
-     * @param  int          $col
+     *
+     * @param int $row
+     * @param int $col
+     *
      * @return string|false
      */
     public function result($row = 0, $col = 0)
@@ -215,6 +240,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Gets a result row as an associative array.
+     *
      * @return array|false
      */
     public function fetchAssoc()
@@ -224,6 +250,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Gets result rows where each row is an associative array.
+     *
      * @return array|false
      */
     public function fetchAssocAll()
@@ -241,6 +268,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Gets a result row as an enumerated array.
+     *
      * @return array|false
      */
     public function fetchRow()
@@ -250,6 +278,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Gets the number of rows in a result.
+     *
      * @return int|false
      */
     public function numRows()
@@ -259,6 +288,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Gets the number of affected rows in a previous operation.
+     *
      * @return int|false
      */
     public function affectedRows()
@@ -268,6 +298,7 @@ class Mysqli implements DBALInterface
 
     /**
      * Returns the auto generated id used in the last query.
+     *
      * @return int (or false)
      */
     public function insertId()
@@ -277,7 +308,9 @@ class Mysqli implements DBALInterface
 
     /**
      * Frees the memory associated with a result.
-     * @return \R2\DBAL\Mysqli This object
+     * Provides a fluent interface.
+     *
+     * @return Mysqli
      */
     public function freeResult()
     {
@@ -291,15 +324,17 @@ class Mysqli implements DBALInterface
 
     /**
      * Closes DB connection.
-     * @return R2\DBAL\Mysqli This object
+     * Provides a fluent interface.
+     *
+     * @return Mysqli
      */
     public function close()
     {
         if (isset($this->link)) {
             if (!empty($this->result)) {
-                @mysqli_free_result($this->result);
+                mysqli_free_result($this->result);
             }
-            @mysqli_close($this->link);
+            mysqli_close($this->link);
         }
         unset($this->result);
         unset($this->link);

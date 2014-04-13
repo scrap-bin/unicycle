@@ -1,7 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-use R2\Command\DBALCommand;
+use R2\Application\Command\DBALCommand;
+use R2\Application\Container;
+use \R2\Config\YamlFileLoader;
 
 require __DIR__.'/../src/bootstrap.php';
 
@@ -27,14 +29,26 @@ if (PHP_SAPI === 'cli') {
     exit('*** This script is for CLI only!');
 }
 
+$config = __DIR__.'/../app/config/config.yml';
+$container = new Container(new YamlFileLoader(), $config, $options['env']);
+
 switch ($command) {
     case 'dbal:schema:create':
     case 'dbal:schema:update':
-        DBALCommand::dropSchema($options, $arguments);
-        DBALCommand::createSchema($options, $arguments);
+        (new DBALCommand($options, $arguments))
+            ->setContainer($container)
+            ->dropSchema()
+            ->createSchema();
         exit(0);
     case 'dbal:schema:drop':
-        DBALCommand::dropSchema($options, $arguments);
+        (new DBALCommand($options, $arguments))
+            ->setContainer($container)
+            ->dropSchema();
+        exit(0);
+    case 'dbal:fixtures:load':
+        (new DBALCommand($options, $arguments))
+            ->setContainer($container)
+            ->loadFixtures();
         exit(0);
 }
 
@@ -52,5 +66,6 @@ dbal
   dbal:schema:create     The same as dbal:schema:update
   dbal:schema:drop       Drop all tables in schema
   dbal:schema:update     Drop all tables than create new from predefined sql
+  dbal:fixtures:load     Load playground data
 <?php
 exit(0);

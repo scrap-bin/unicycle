@@ -2,32 +2,28 @@
 
 namespace unit\R2\ORM;
 
-use R2\ORM\EntityManager;
-use R2\DBAL\PDOMySQL;
+use R2\Application\Container;
+use R2\Config\YamlFileLoader;
+use R2\Application\Command\DBALCommand;
 
 class EntityManagerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \R2\DBAL\DBALInterface */
-    protected static $dbh;
+    /** @var string */
+    protected static $entityClass;
+    /** @var R2\ORM\EntityManagerInterface */
+    protected static $em;
 
     public static function setUpBeforeClass()
     {
-        \R2\Command\DBALCommand::dropSchema(['env' => 'test'], []);
-        \R2\Command\DBALCommand::createSchema(['env' => 'test'], []);
-        $resource = __DIR__.'/../../../../app/config/parameters/test.yml';
-        $loader = new \R2\Config\YamlFileLoader();
-        $dbParams = $loader->load($resource)['parameters']['db_params'];
-        self::$dbh = new PDOMySQL($dbParams);
-    }
-
-    /**
-     * @var \R2\ORM\EntityManager
-     */
-    protected $em;
-
-    protected function setUp()
-    {
-        $this->em = new EntityManager(self::$dbh);
+        $config = __DIR__.'/../../../../app/config/config.yml';
+        $container = new Container(new YamlFileLoader(), $config, 'test');
+        (new DBALCommand())
+            ->setContainer($container)
+            ->dropSchema()
+            ->createSchema()
+            ->loadFixtures();
+        self::$em = $container->get('entity_manager');
+        self::$entityClass = 'R2\\Model\\User';
     }
 
     protected function insertRow()
@@ -40,17 +36,20 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
             $randomName .= $chars[mt_rand(0, $charsLength - 1)];
         }
         $time = date('Y-m-d H:i:s');
-        $o = new \R2\Model\User();
+        $class = self::$entityClass;
+        $o = new $class();
         $o->username = $randomName;
         $o->email = $randomName.'@example.com';
         $o->realname = $randomName;
         $o->created = $o->undated = $time;
-        $this->em->persist($o);
+        // EntityManager magically gets shortcut to persist methods of repository
+        self::$em->persist($o);
     }
 
     protected function getNumRows()
     {
-        return self::$dbh->query("SELECT COUNT(*) FROM `:p_users`")->result();
+        // EntityManager magically gets shortcut to result and fetch* methods of dbal
+        return self::$em->nativeQuery("SELECT COUNT(*) FROM `:p_users`")->result();
     }
 
     /**
@@ -58,7 +57,7 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetConnection()
     {
-        $this->assertSame(self::$dbh, $this->em->getConnection());
+        $this->assertInstanceOf('R2\\DBAL\\DBALInterface', self::$em->getConnection());
     }
 
     /**
@@ -67,7 +66,7 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetRepository()
     {
         $o = new \R2\Model\User();
-        $repo = $this->em->getRepository($o);
+        $repo = self::$em->getRepository($o);
         $this->assertEquals('R2\\ORM\\EntityRepository', get_class($repo));
     }
 
@@ -81,13 +80,13 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $num = $this->getNumRows();
 
         $this->insertRow();
-        $this->em->rollback();
-        $this->em->beginTransaction();
+        self::$em->rollback();
+        self::$em->beginTransaction();
         $this->assertEquals($num, $this->getNumRows());
 
         $this->insertRow();
-        $this->em->commit();
-        $this->em->beginTransaction();
+        self::$em->commit();
+        self::$em->beginTransaction();
         $this->assertEquals($num + 1, $this->getNumRows());
     }
 
@@ -96,7 +95,7 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetMeta()
     {
-        $meta = $this->em->getMeta('R2\\Model\\User');
+        $meta = self::$em->getMeta(self::$entityClass);
         // Remove the following lines when you implement this test.
         $this->assertEquals('users', $meta['table']);
     }
@@ -106,8 +105,8 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCall()
     {
-        // EntityManager gets shortcut to find* methods of repository
-        $o = $this->em->find('R2\\Model\\User', 1);
+        // EntityManager magically gets shortcut to find* methods of repository
+        $o = self::$em->find(self::$entityClass, 1);
         $this->assertEquals('guest', $o->username);
     }
 
@@ -117,8 +116,8 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testNativeQuery()
     {
-        $o = $this->em->nativeQuery("SELECT * FROM `:p_users` WHERE `id`=1")
-            ->get('R2\\Model\\User');
+        $o = self::$em->nativeQuery("SELECT * FROM `:p_users` WHERE `id`=1")
+            ->get(self::$entityClass);
         $this->assertEquals('guest', $o->username);
     }
 
@@ -128,8 +127,8 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAll()
     {
-        $iter = $this->em->nativeQuery("SELECT * FROM `:p_users` WHERE `id`<=3")
-            ->getAll('R2\\Model\\User');
+        $iter = self::$em->nativeQuery("SELECT * FROM `:p_users` WHERE `id`<=3")
+            ->getAll(self::$entityClass);
         $this->assertEquals(3, $iter->count());
     }
 }
