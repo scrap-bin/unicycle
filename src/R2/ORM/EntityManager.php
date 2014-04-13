@@ -3,7 +3,8 @@
 namespace R2\ORM;
 
 use R2\Dbal\DbalInterface;
-use InvalidArgumentException as ArgsException;
+use InvalidArgumentException;
+use BadMethodCallException;
 
 /**
  * The EntityManager is the central access point to Data Mapper functionality.
@@ -14,8 +15,10 @@ class EntityManager implements EntityManagerInterface
     protected $config;
 
     const DEFAULT_REPOSITORY_CLASS = 'R2\\ORM\\EntityRepository';
+
     /**
      * Constructor
+     *
      * @param DbalInterface $db
      * @param array         $config
      */
@@ -27,6 +30,7 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * Gets the database connection object used by the EntityManager.
+     *
      * @return DbalInterface
      */
     public function getConnection()
@@ -36,30 +40,62 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * Find repository for given entity
-     * @param  mixed            $entity Enity instance or class name
+     *
+     * @param mixed $entity Enity instance or class name
+     *
      * @return EntityRepository
-     * @throws ArgsException
      */
     public function getRepository($entity)
     {
         return $this->getMeta($entity)['repository'];
     }
 
+    /**
+     * Starts a transaction on the underlying database connection.
+     * Provides a fluent interface.
+     *
+     * @return EntityManager
+     */
     public function beginTransaction()
     {
         $this->db->beginTransaction();
+
+        return $this;
     }
 
+    /**
+     * Commits a transaction on the underlying database connection.
+     * Provides a fluent interface.
+     *
+     * @return EntityManager
+     */
     public function commit()
     {
         $this->db->commit();
+
+        return $this;
     }
 
+    /**
+     * Performs a rollback on the underlying database connection.
+     * Provides a fluent interface.
+     *
+     * @return EntityManager
+     */
     public function rollback()
     {
         $this->db->rollback();
+
+        return $this;
     }
 
+    /**
+     * Returns the ORM metadata descriptor for a class.
+     *
+     * @param string|object $entity Entity class or entity itself
+     *
+     * @return array
+     */
     public function getMeta($entity)
     {
         $entityClass = $this->getEntityClass($entity);
@@ -114,6 +150,14 @@ class EntityManager implements EntityManagerInterface
         return $this->config[$entityClass];
     }
 
+    /**
+     * Returns and entity class name
+     *
+     * @param string|object $entity Entity class or entity itself
+     *
+     * @return string
+     * @throws InvalidArgumentException
+     */
     private function getEntityClass($entity)
     {
         if (is_string($entity) && class_exists($entity)) {
@@ -121,10 +165,17 @@ class EntityManager implements EntityManagerInterface
         } elseif (is_object($entity)) {
             return get_class($entity);
         } else {
-            throw new ArgsException('Wrong entity for which you need to find repository.');
+            throw new InvalidArgumentException('Wrong entity for which you need to find repository.');
         }
     }
 
+    /**
+     * Returns a field collection.
+     *
+     * @param string $entityClass Entity class
+     *
+     * @return array
+     */
     private function getFields($entityClass)
     {
         $fields = [];
@@ -139,20 +190,16 @@ class EntityManager implements EntityManagerInterface
         return $fields;
     }
 
-    public function getFieldByColumn($entity, $column)
-    {
-        $meta = $this->getMeta($entity);
-
-        return array_search($column, $meta['fields']);
-    }
-
-    public function getColumnByField($entity, $field)
-    {
-        $meta = $this->getMeta($entity);
-
-        return $meta['fields'][$field];
-    }
-
+    /**
+     * Adds support for magic finders and persisters.
+     * You can omit getRepository() in some cases.
+     *
+     * @param type $method
+     * @param type $arguments
+     *
+     * @return type
+     * @throws BadMethodCallException
+     */
     public function __call($method, $arguments)
     {
         if (in_array($method, ['persist', 'remove', 'refresh', 'load', 'unload'])) {
@@ -177,9 +224,18 @@ class EntityManager implements EntityManagerInterface
                 }
             }
         }
-        throw new \BadMethodCallException("Undefined method '{$method}'.");
+        throw new BadMethodCallException("Undefined method '{$method}'.");
     }
 
+    /**
+     * Direct SQL query execution.
+     * Provides a fluent interface.
+     *
+     * @param type  $sql
+     * @param array $queryParams Parameters as [name => value, ...]
+     *
+     * @return EntityManager
+     */
     public function nativeQuery($sql, array $queryParams = [])
     {
         $this->db->query($sql, $queryParams);
@@ -187,10 +243,18 @@ class EntityManager implements EntityManagerInterface
         return $this;
     }
 
+    /**
+     * Get entity, found by nativeQuery.
+     *
+     * @param mixed $entity Enity instance or class name
+     *
+     * @return object
+     * @throws InvalidArgumentException
+     */
     public function get($entity)
     {
         if (!$this->db->numRows()) {
-            throw new \InvalidArgumentException('Empty result');
+            throw new InvalidArgumentException('Empty result');
         }
         $entityClass = $this->getEntityClass($entity);
 
@@ -198,6 +262,14 @@ class EntityManager implements EntityManagerInterface
             ->load(new $entityClass(), $this->db->fetchAssoc());
     }
 
+    /**
+     * Get entity collection, found by nativeQuery.
+     *
+     * @param mixed $entity Enity instance or class name
+     *
+     * @return EntityIterator
+     * @throws InvalidArgumentException
+     */
     public function getAll($entity)
     {
         return new EntityIterator($this->getRepository($entity), $this->db->fetchAssocAll());

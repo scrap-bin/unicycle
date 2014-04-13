@@ -350,4 +350,29 @@ class EntityRepository implements EntityRepositoryInterface
     {
         throw new \InvalidArgumentException('Key generator not overriden');
     }
+
+    /**
+     * Gets field name by column name.
+     *
+     * @param string $column Column name
+     *
+     * @return string
+     */
+    public function getFieldByColumn($column)
+    {
+        return array_search($column, $this->getMeta()['fields']);
+    }
+
+    /**
+     * Gets column name by field name.
+     *
+     * @param string $field Field name
+     *
+     * @return string
+     * @throws BadMethodCallException
+     */
+    public function getColumnByField($field)
+    {
+        return $this->getMeta()['fields'][$field];
+    }
 }

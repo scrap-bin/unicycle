@@ -14,4 +14,6 @@ interface EntityRepositoryInterface
     public function refresh($entity);
     public function load($entity, array $init);
     public function unload($entity, array $fieldNames = []);
+    public function getFieldByColumn($column);
+    public function getColumnByField($field);
 }

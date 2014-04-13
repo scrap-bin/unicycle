@@ -102,24 +102,6 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers R2\ORM\EntityManager::getFieldByColumn
-     */
-    public function testGetFieldByColumn()
-    {
-        $o = new \R2\Model\User();
-        $this->assertEquals('username', $this->em->getFieldByColumn($o, 'username'));
-    }
-
-    /**
-     * @covers R2\ORM\EntityManager::getColumnByField
-     */
-    public function testGetColumnByField()
-    {
-        $o = new \R2\Model\User();
-        $this->assertEquals('username', $this->em->getColumnByField($o, 'username'));
-    }
-
-    /**
      * @covers R2\ORM\EntityManager::__call
      */
     public function testCall()
