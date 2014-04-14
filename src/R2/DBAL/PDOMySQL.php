@@ -102,8 +102,8 @@ class PDOMySQL implements DBALInterface
     private function replace($matches)
     {
         $var = $this->paramsIn[$matches[1]];
-        if (is_null($var) || (is_array($var) && count($var) == 0)) {
-            return 'NULL';
+        if (is_null($var) || (is_array($var) && empty($var))) {
+            $result = 'NULL';
         } elseif (is_array($var)) {
             $tmp = [];
             foreach ($var as $item) {
@@ -114,13 +114,13 @@ class PDOMySQL implements DBALInterface
                     $tmp[] = '?';
                 }
             }
-
-            return implode(',', $tmp);
+            $result = implode(',', $tmp);
+        } else {
+            $this->paramsOut[] = $var;
+            $result = '?';
         }
-
-        $this->paramsOut[] = $var;
-
-        return '?';
+        
+        return $result;
     }
 
     /**
@@ -270,7 +270,7 @@ class PDOMySQL implements DBALInterface
      */
     public function numRows()
     {
-        // WARNING: this behaviour is not guaranteed for all db, but for MySQL it works
+        // WARNING: this behaviour is not guaranteed for all DBs, but for MySQL it does
         return isset($this->result) ? $this->result->rowCount() : false;
     }
 
@@ -291,7 +291,7 @@ class PDOMySQL implements DBALInterface
      */
     public function insertId()
     {
-        // WARNING: may not return a meaningful result for all db, but for MySQL it works
+        // WARNING: may not return a meaningful result for all DBs, but for MySQL it does
         return $this->link ? $this->link->lastInsertId() : false;
     }
 
