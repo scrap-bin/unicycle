@@ -119,7 +119,7 @@ class PDOMySQL implements DBALInterface
             $this->paramsOut[] = $var;
             $result = '?';
         }
-        
+
         return $result;
     }
 

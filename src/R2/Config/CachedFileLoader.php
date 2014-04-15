@@ -9,7 +9,7 @@ class CachedFileLoader extends SerializedFileLoader
 
     /**
      * Constructor.
-     * 
+     *
      * @param mixed  $loader   File loader or array of loaders
      * @param string $template Resource filename template
      */
@@ -26,9 +26,9 @@ class CachedFileLoader extends SerializedFileLoader
 
     /**
      * Checks if such file type is supported.
-     * 
-     * @param  string  $resource
-     * 
+     *
+     * @param string $resource
+     *
      * @return Boolean
      */
     public function supports($resource)
@@ -46,9 +46,9 @@ class CachedFileLoader extends SerializedFileLoader
 
     /**
      * Loads data.
-     * 
-     * @param  string $resource The filename
-     * 
+     *
+     * @param string $resource The filename
+     *
      * @return mixed
      */
     public function load($resource)
@@ -85,9 +85,9 @@ class CachedFileLoader extends SerializedFileLoader
 
     /**
      * Composes template filename.
-     * 
-     * @param  string $resource
-     * 
+     *
+     * @param string $resource
+     *
      * @return string
      */
     private function getCacheFileName($resource)

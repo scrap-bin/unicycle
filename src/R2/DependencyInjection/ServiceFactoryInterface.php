@@ -5,17 +5,13 @@ namespace R2\DependencyInjection;
 interface ServiceFactoryInterface
 {
     /**
-     * Create new service
+     * Create new service instance
      * @param  string $name
      * @param  array  $definition
      * @return mixed
      */
-    public function createService($name, $definition);
+    public function createNewService($name, array $definition);
     /**
-     * Create new [singleton] service
-     * @param  string $name
-     * @param  array  $definition
-     * @return mixed
      */
-    public function createSharedService($name, $definition);
+    public function createService($name, array $definition);
 }

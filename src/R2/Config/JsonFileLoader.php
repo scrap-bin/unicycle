@@ -8,9 +8,9 @@ class JsonFileLoader implements FileLoaderInterface
 {
     /**
      * Checks if such file type is supported.
-     * 
-     * @param  string  $resource
-     * 
+     *
+     * @param string $resource
+     *
      * @return Boolean
      */
     public function supports($resource)

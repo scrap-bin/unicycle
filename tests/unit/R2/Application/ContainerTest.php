@@ -30,7 +30,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             'services' => [
                 'my_service' => [
                     'class' => 'unit\\R2\\Application\\ServiceMock',
-                    'factory_method' => 'createService',
+                    'factory_method' => 'createNewService',
                     'arguments' => ['foo'],
                 ],
                 'my_shared_service' => [

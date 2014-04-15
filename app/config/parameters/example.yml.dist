@@ -7,7 +7,6 @@ parameters:
         host:         localhost
         username:     root
         password:     ~
-        name:         ~
         dbname:       test
         prefix:       test_
         socket:       ~

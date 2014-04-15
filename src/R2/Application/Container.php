@@ -21,7 +21,8 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     private $properties;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param mixed       $loader      One loader object or array of loaders
      * @param mixed       $resource    Resource is something that loader can load. filename as general
      * @param string|null $environment Optional environment parameter. If not specified, mean "production".
@@ -69,9 +70,8 @@ class Container implements ContainerInterface, ServiceFactoryInterface
      *
      * @param mixed $resource A resource
      *
-     * @return LoaderInterface A LoaderInterface instance
-     *
-     * @throws \InvalidArgumentException When no proper loader
+     * @return LoaderInterface          A LoaderInterface instance
+     * @throws InvalidArgumentException When no proper loader
      */
     private function resolveLoader($resource)
     {
@@ -81,12 +81,14 @@ class Container implements ContainerInterface, ServiceFactoryInterface
             }
         }
 
-        throw new \InvalidArgumentException('Cannot resolve loader');
+        throw new InvalidArgumentException('Cannot resolve loader');
     }
 
     /**
-     * Get service
-     * @param  string $name
+     * Gets a service.
+     *
+     * @param string $name
+     *
      * @return object
      */
     public function get($name)
@@ -106,7 +108,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
                                : $this,
             'factory_method'  => isset($config['factory_method'])
                                ? $this->resolve($config['factory_method'])
-                               : 'createSharedService',
+                               : 'createService',
             'service'         => isset($config['service'])
                                ? $this->resolve($config['service'])
                                : $this,
@@ -135,9 +137,11 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * Set service
-     * @param  string    $name
-     * @param  object    $value
+     * Sets a shared service.
+     *
+     * @param string $name
+     * @param object $value
+     *
      * @return Container
      */
     public function set($name, $value)
@@ -148,7 +152,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * Get configuration parameter
+     * Gets configuration parameter.
      * Use dots to access nested item. For ex. "services.foo.tags"
      *
      * @param string $name
@@ -171,7 +175,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * Set configuration parameter
+     * Sets configuration parameter.
      *
      * @param string $name
      * @param mixed  $value
@@ -201,10 +205,12 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * Resolve some special cases:
+     * Resolves some special cases:
      *   "@name" is a Service reference
      *   "%name%" is a Parameter reference. looks in "parameters" section
-     * @param  mixed $value
+     *
+     * @param mixed $value
+     *
      * @return mixed
      */
     private function resolve($value)
@@ -228,8 +234,10 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * Replace %name% pattern to concrete value
-     * @param  array  $matches
+     * Replace %name% pattern to concrete value.
+     *
+     * @param array $matches
+     *
      * @return string
      */
     private function substitute($matches)
@@ -243,16 +251,14 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * The default case of creational method (for service factory)
-     * Produces new instance in every call
+     * Create new service instance.
      *
      * @param string $name
      * @param array  $definition
      *
-     * @return object
-     * @throws InvalidArgumentException
+     * @return mixed
      */
-    public function createService($name, $definition)
+    public function createNewService($name, array $definition)
     {
         $class = $definition['class'];
         if (!isset($class)) {
@@ -287,17 +293,15 @@ class Container implements ContainerInterface, ServiceFactoryInterface
     }
 
     /**
-     * The case of creational method (for service factory)
-     * Produces single instance
+     * Create new or share existing service
      *
      * @param string $name
      * @param array  $definition
      *
-     * @return object
-     * @throws InvalidArgumentException
+     * @return mixed
      */
-    public function createSharedService($name, $definition)
+    public function createService($name, array $definition)
     {
-        return $this->shared[$name] = $this->createService($name, $definition);
+        return $this->shared[$name] = $this->createNewService($name, $definition);
     }
 }
