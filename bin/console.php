@@ -3,7 +3,7 @@
 
 use R2\Application\Command\DBALCommand;
 use R2\Application\Container;
-use \R2\Config\YamlFileLoader;
+use R2\Config\YamlFileLoader;
 
 require __DIR__.'/../src/bootstrap.php';
 
