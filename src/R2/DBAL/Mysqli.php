@@ -314,7 +314,7 @@ class Mysqli implements DBALInterface
      */
     public function freeResult()
     {
-        if ($this->result instanceof \mysqli_result) {
+        if (isset($this->result) && $this->result instanceof \mysqli_result) {
             mysqli_free_result($this->result);
             unset($this->result);
         }
@@ -331,12 +331,9 @@ class Mysqli implements DBALInterface
     public function close()
     {
         if (isset($this->link)) {
-            if (!empty($this->result)) {
-                mysqli_free_result($this->result);
-            }
+            $this->freeResult();
             mysqli_close($this->link);
         }
-        unset($this->result);
         unset($this->link);
         $this->inTransaction = 0;
 

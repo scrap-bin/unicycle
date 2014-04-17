@@ -38,7 +38,7 @@ class EntityIterator extends \ArrayIterator
      */
     public function getAllFieldValues($field)
     {
-        $column = $this->repo->getEntityManager()->getColumnByField($this->repo->getClassName(), $field);
+        $column = $this->repo->getColumnByField($field);
         $result = [];
         for ($this->rewind(); $this->valid(); $this->next()) {
             $result[] = parent::current()[$column];
