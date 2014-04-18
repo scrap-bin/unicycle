@@ -21,9 +21,9 @@ class Controller implements ContainerAwareInterface
     /**
      * Sets the Container associated with this Controller.
      * Provides a fluent interface.
-     * 
+     *
      * @param ContainerInterface $container A ContainerInterface instance
-     * 
+     *
      * @return Controller
      */
     public function setContainer(ContainerInterface $container = null)
@@ -33,13 +33,12 @@ class Controller implements ContainerAwareInterface
 //        $this->user          = $container->get('user');
         $this->entityManager = $container->get('entity_manager');
 //        $this->lookup        = $container->get('lookup_helper');
-
         return $this;
     }
 
     /**
      * Gets a service.
-     * 
+     *
      * @param  string $id The service identifier
      * @return object The associated service
      */
@@ -50,9 +49,9 @@ class Controller implements ContainerAwareInterface
 
     /**
      * Gets a parameter.
-     * 
+     *
      * @param string $name The parameter name
-     * 
+     *
      * @return mixed The parameter value
      */
     public function getParameter($name)
@@ -79,7 +78,7 @@ class Controller implements ContainerAwareInterface
     /**
      * Do a HTTP redirect response to the given URL
      * Note: on a target the Referer header will be set to preceding URL.
-     * 
+     *
      * @param string  $url    The URL to redirect to
      * @param integer $status The status code to use for the Response
      */
@@ -96,7 +95,7 @@ class Controller implements ContainerAwareInterface
     /**
      * Response by HTML redirecting page.
      * Note: on a target the Referer header will be set to bouncing (i.e. this) URL.
-     * 
+     *
      * @param string $url     The URL to redirect to
      * @param string $message The message to show
      * @param int    $delay   Seconds to redirect. 0 - no wait
@@ -116,7 +115,7 @@ class Controller implements ContainerAwareInterface
 
     /**
      * Show message and stop.
-     * 
+     *
      * @param string $message The message to show
      */
     public function message($message)
@@ -126,7 +125,7 @@ class Controller implements ContainerAwareInterface
 
     /**
      * Helper: grab form fields for validation and persistence
-     * 
+     *
      * @param array $names
      */
     public function collectPostForm($names)

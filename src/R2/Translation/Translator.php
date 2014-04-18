@@ -15,7 +15,7 @@ class Translator implements TranslatorInterface
 
     /**
      * Constructor.
-     * 
+     *
      * @param LoaderInterface $loader
      * @param string          $fallbackLocale
      * @param string          $fallbackDomain
@@ -31,7 +31,7 @@ class Translator implements TranslatorInterface
 
     /**
      * Gets current locale.
-     * 
+     *
      * @return string
      */
     public function getLocale()
@@ -42,23 +42,23 @@ class Translator implements TranslatorInterface
     /**
      * Sets current locale.
      * Provides a fluent interface.
-     * 
-     * @param string $locale
+     *
+     * @param  string $locale
      * @return I18n
      */
     public function setLocale($locale)
     {
         $this->locale = $locale;
-        
+
         return $this;
     }
 
     /**
      * Translates the given message.
-     * 
+     *
      * @param string      $token The message
      * @param string|null $name  Domain
-     * 
+     *
      * @return string
      */
     public function t($token, $domain = null)

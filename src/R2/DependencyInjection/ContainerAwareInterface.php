@@ -9,7 +9,7 @@ interface ContainerAwareInterface
      * Provides a fluent interface.
      *
      * @param ContainerInterface $container A ContainerInterface instance
-     * 
+     *
      * @return $this
      */
     public function setContainer(ContainerInterface $container);

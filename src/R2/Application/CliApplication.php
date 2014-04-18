@@ -31,12 +31,12 @@ class CliApplication implements ContainerAwareInterface
     {
         restore_error_handler();
     }
-    
+
     public function onError($errno, $errstr, $errfile, $errline)
     {
         throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
-    
+
     /**
      * Sets the Container associated with this Application.
      * Provides a fluent interface.

@@ -22,4 +22,3 @@ services:
     i18n_loader:
         class: R2\Application\LangLoader
         arguments: ["%root_dir%/translations", "%root_dir%/cache"]
-
