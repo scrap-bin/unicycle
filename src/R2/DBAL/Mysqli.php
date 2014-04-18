@@ -85,6 +85,7 @@ class Mysqli implements DBALInterface
             $port
         );
         if (!$this->link) {
+            unset($this->link);
             throw new Exception('Unable to connect database');
         }
         mysqli_autocommit($this->link, false);   // in general, we need one commit over page

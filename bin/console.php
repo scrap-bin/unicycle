@@ -1,15 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-use R2\Application\Command\DBALCommand;
 use R2\Application\Container;
 use R2\Config\YamlFileLoader;
+use R2\Application\Command\DBALCommand;
+use R2\Application\Command\APICommand;
 
 require __DIR__.'/../src/bootstrap.php';
 
 // Is it command line?
 if (PHP_SAPI === 'cli') {
-    $shortOpts = 'e:';
+    $shortOpts = '';
     $longOpts = ['env:'];
     $defaults = [
         'env' => 'production',
@@ -63,9 +64,9 @@ Options:
 
 Available commands:
 dbal
-  dbal:schema:create     The same as dbal:schema:update
-  dbal:schema:drop       Drop all tables in schema
-  dbal:schema:update     Drop all tables than create new from predefined sql
-  dbal:fixtures:load     Load playground data
+  dbal:schema:create    The same as dbal:schema:update
+  dbal:schema:drop      Drop all tables in schema
+  dbal:schema:update    Drop all tables than create new from predefined sql
+  dbal:fixtures:load    Load playground data
 <?php
 exit(0);

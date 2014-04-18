@@ -1,6 +1,12 @@
 parameters:
     debug: false
 
+    languages:
+        - {label: English, synonym: English, locale: en_US, short_label: en}
+        - {label: Русский, synonym: Russian, locale: ru_RU, short_label: ru}
+    default_lang: en
+    fallback_lang: en
+
     dbal_class: R2\DBAL\PDOMySQL
     
     db_params:

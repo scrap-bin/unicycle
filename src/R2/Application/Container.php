@@ -39,7 +39,7 @@ class Container implements ContainerInterface, ServiceFactoryInterface
             'parameters' => [
                 'debug'       => false,
                 'environment' => $environment ?: 'production',
-                'root_dir'    => $dir,
+                'root_dir'    => realpath($dir.'/..'),
             ],
             'synonyms'   => [],
             'services'   => [],

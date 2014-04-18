@@ -3,7 +3,7 @@
 use R2\Application\Container;
 use R2\Config\CachedFileLoader;
 use R2\Config\YamlFileLoader;
-use R2\Application\WebApp;
+use R2\Application\WebApplication;
 
 require __DIR__.'/../src/bootstrap.php';
 
@@ -12,6 +12,6 @@ $container = new Container(
     __DIR__.'/../app/config/config.yml',
     filter_input(INPUT_SERVER, 'APPLICATION_ENV')
 );
-(new WebApp())
+(new WebApplication())
     ->setContainer($container)
     ->handleRequest();

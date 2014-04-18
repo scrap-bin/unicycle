@@ -2,18 +2,23 @@
 
 namespace R2\Application\Command;
 
-use R2\Application\CliApp;
+use R2\Application\CliApplication;
 
-class DBALCommand extends CliApp
+class DBALCommand extends CliApplication
 {
     public function dropSchema()
     {
         try {
             $prefix = $this->container->getParameter('parameters.db_params.prefix');
-            foreach ($this->db->query("SHOW TABLES")->fetchAssocAll() as $row) {
+            foreach ($this->db->query("SHOW FULL TABLES")->fetchAssocAll() as $row) {
                 $tableName = current($row);
-                if (stripos($tableName, $prefix) === 0) {
-                    $this->db->query("DROP TABLE `{$tableName}`");
+                $tableType = next($row);
+                if (stripos($tableName, $prefix) === 0 && in_array($tableType, ['BASE TABLE', 'VIEW'])) {
+                    if ($tableType == 'BASE TABLE') {
+                        $this->db->query("DROP TABLE `{$tableName}`");
+                    } elseif ($tableType == 'VIEW') {
+                        $this->db->query("DROP VIEW `{$tableName}`");
+                    }
                 }
             }
             $this->db->commit()->beginTransaction();
@@ -29,7 +34,7 @@ class DBALCommand extends CliApp
     public function createSchema()
     {
         try {
-            $dir = $this->container->getParameter('parameters.root_dir').'/../install';
+            $dir = $this->container->getParameter('parameters.root_dir').'/install';
             $schema = array_filter(
                 array_map(
                     'trim',
@@ -52,7 +57,7 @@ class DBALCommand extends CliApp
     public function loadFixtures()
     {
         try {
-            $dir = $this->container->getParameter('parameters.root_dir').'/../install';
+            $dir = $this->container->getParameter('parameters.root_dir').'/install';
             $data = array_filter(
                 array_map(
                     'trim',
