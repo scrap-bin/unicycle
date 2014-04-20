@@ -7,26 +7,31 @@ namespace R2\Translation;
  */
 class Translator implements TranslatorInterface
 {
+    /** @var LoaderInterface */
     protected $loader;
+    /** @var array */
     protected $base;
+    /** @var string */
     protected $locale;
+    /** @var string */
     protected $fallbackLocale;
-    protected $fallbackDomain;
+    /** @var string */
+    protected $defaultDomain;
 
     /**
      * Constructor.
      *
      * @param LoaderInterface $loader
      * @param string          $fallbackLocale
-     * @param string          $fallbackDomain
+     * @param string          $defaultDomain
      */
-    public function __construct(LoaderInterface $loader, $fallbackLocale = 'en', $fallbackDomain = 'common')
+    public function __construct(LoaderInterface $loader, $fallbackLocale = 'en', $defaultDomain = 'common')
     {
         $this->loader         = $loader;
         $this->base           = [];
         $this->locale         =
         $this->fallbackLocale = $fallbackLocale;
-        $this->fallbackDomain = $fallbackDomain;
+        $this->defaultDomain  = $defaultDomain;
     }
 
     /**
@@ -65,7 +70,7 @@ class Translator implements TranslatorInterface
     {
         $locale = $locale2 = $this->locale;
         if (!isset($domain)) {
-            $domain = $this->fallbackDomain;
+            $domain = $this->defaultDomain;
         }
         if (isset($this->base[$locale][$domain])) {
             $article = $this->base[$locale][$domain];

@@ -9,43 +9,48 @@ use R2\Config\CachedFileLoader;
 class LangLoader implements I18nLoaderInterface
 {
     /** @var string */
-    protected $langDir;
+    protected $localeDir;
     /** @var CachedFileLoader */
     protected $fileLoader;
 
     /**
-     * Constructor
-     * @param string $langDir
+     * Constructor.
+     * 
+     * @param string $localeDir
      * @param string $cacheDir
      */
-    public function __construct($langDir, $cacheDir)
+    public function __construct($localeDir, $cacheDir)
     {
-        $this->langDir = $langDir;
-        $this->fileLoader = new CachedFileLoader([new YamlFileLoader()], $cacheDir.'/%s.ser');
+        $this->localeDir = $localeDir;
+        $this->fileLoader = new CachedFileLoader([new YamlFileLoader()], $cacheDir.'/%s.ser'); // weird! hardcoded
     }
 
     /**
-     * Load domain translations
-     * @param  string $language
-     * @param  string $domain
+     * Load domain translations.
+     * 
+     * @param string $locale
+     * @param string $domain
+     * 
      * @return mixed
      */
-    public function load($language, $domain)
+    public function load($locale, $domain)
     {
-        $file = "{$this->langDir}/{$domain}.{$language}.yml";
+        $file = "{$this->localeDir}/{$domain}.{$locale}.yml";
 
         return $this->fileLoader->load($file);
     }
 
     /**
-     * Check if domain translations exist
-     * @param  string $language
-     * @param  string $domain
-     * @return array
+     * Checks if domain translations exist.
+     * 
+     * @param string $locale
+     * @param string $domain
+     * 
+     * @return Boolean
      */
-    public function exists($language, $domain)
+    public function exists($locale, $domain)
     {
-        $file = "{$this->langDir}/{$domain}.{$language}.yml";
+        $file = "{$this->localeDir}/{$domain}.{$locale}.yml";
 
         return file_exists($file);
     }
