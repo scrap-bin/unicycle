@@ -30,7 +30,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnCallback(
                     function ($locale, $domain) {
-                        return $this->base[$locale][$domain];
+                        return isset($this->base[$locale][$domain]) ? $this->base[$locale][$domain] : false;
                     }
                 )
             );

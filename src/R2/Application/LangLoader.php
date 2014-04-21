@@ -37,7 +37,7 @@ class LangLoader implements I18nLoaderInterface
     {
         $file = "{$this->localeDir}/{$domain}.{$locale}.yml";
 
-        return $this->fileLoader->load($file);
+        return file_exists($file) ? $this->fileLoader->load($file) : false;
     }
 
     /**
