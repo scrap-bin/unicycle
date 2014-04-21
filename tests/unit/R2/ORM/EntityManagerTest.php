@@ -105,7 +105,7 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCall()
     {
-        // EntityManager magically gets shortcut to find* methods of repository
+        // EntityManager magically gets shortcut to useful methods of repository and connection.
         $o = self::$em->find(self::$entityClass, 1);
         $this->assertEquals('guest', $o->username);
         $count = self::$em->count(self::$entityClass, ['username' => 'guest']);

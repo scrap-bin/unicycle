@@ -46,7 +46,7 @@ $errors[] = $this->i18n->t('Invalid parameter', 'validators');
 ```yaml
 services:
     i18n:
-        class: R2\Translation\I18n
+        class: R2\Translation\Translator
         arguments: ["@i18n_loader", "%fallback_lang%"]
         settings: { language: ["%default_lang%"] }
 ```
