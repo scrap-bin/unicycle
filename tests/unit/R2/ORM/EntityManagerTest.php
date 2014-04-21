@@ -108,6 +108,8 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         // EntityManager magically gets shortcut to find* methods of repository
         $o = self::$em->find(self::$entityClass, 1);
         $this->assertEquals('guest', $o->username);
+        $count = self::$em->count(self::$entityClass, ['username' => 'guest']);
+        $this->assertEquals(1, $count);
     }
 
     /**

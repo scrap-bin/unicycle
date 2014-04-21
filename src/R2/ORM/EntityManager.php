@@ -207,7 +207,7 @@ class EntityManager implements EntityManagerInterface
             $object = $this->db;
         } elseif (in_array($method, ['persist', 'remove', 'refresh', 'load', 'unload'])) {
             $object = $this->getRepository($arguments[0]);
-        } elseif (0 === strpos($method, 'find')) {
+        } elseif (0 === strpos($method, 'find') || $method == 'count') {
             $object = $this->getRepository(array_shift($arguments));
         }
         if (isset($object)) {

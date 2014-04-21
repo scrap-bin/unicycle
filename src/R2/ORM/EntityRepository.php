@@ -93,7 +93,7 @@ class EntityRepository implements EntityRepositoryInterface
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-        $rows = $this->buildQuery($criteria, $orderBy, $limit, $offset)->fetchAssocAll();
+        $rows = $this->buildSelectQuery(false, $criteria, $orderBy, $limit, $offset)->fetchAssocAll();
 
         return new EntityIterator($this, $rows);
     }
@@ -105,7 +105,7 @@ class EntityRepository implements EntityRepositoryInterface
      */
     public function findOneBy(array $criteria)
     {
-        $db = $this->buildQuery($criteria, null, 1, null);
+        $db = $this->buildSelectQuery(false, $criteria, null, 1, null);
         if (!$db->numRows()) {
             throw new \InvalidArgumentException('Empty result');
         }
@@ -116,18 +116,31 @@ class EntityRepository implements EntityRepositoryInterface
     }
 
     /**
+     * Count objects for a set of criteria.
+     * @param  array  $criteria The criteria.
+     * @return int    The count
+     */
+    public function count(array $criteria)
+    {
+        return $this->buildSelectQuery(true, $criteria)->result();
+    }
+
+    /**
      * Build and run SQL query.
+     * @param  Boolean               $countOnly
      * @param  array                 $criteria
      * @param  array|null            $orderBy
      * @param  int|null              $limit
      * @param  int|null              $offset
      * @return R2\Dbal\DbalInterface
      */
-    private function buildQuery(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    private function buildSelectQuery($countOnly, array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
         $meta = $this->getMeta();
         $table = $meta['table'];
-        $sql = "SELECT * FROM `:p_{$table}`";
+        $sql = $countOnly
+            ? "SELECT COUNT(*) FROM `:p_{$table}`"
+            : "SELECT * FROM `:p_{$table}`";
         $params = [];
         if (!empty($criteria)) {
             $tmp = [];
