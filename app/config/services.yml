@@ -9,7 +9,6 @@ services:
     entity_manager:
         class: R2\ORM\EntityManager
         arguments: [ "@db" ]
-
 #
 # Internatianalization
 #
@@ -21,3 +20,42 @@ services:
     i18n_loader:
         class: R2\Application\LangLoader
         arguments: ["%root_dir%/translations", "%root_dir%/cache"]
+#
+# HTTP Request & Router
+#
+    request:
+        class: R2\HTTP\Request
+
+    router:
+        class: R2\HTTP\Router
+        arguments: ["%routes%"]
+#
+# Security
+#
+    user_provider:
+        class: "%provider_class%"
+        arguments: "%provider_params%"
+
+    user:
+        factory_service: "@user_provider"
+        method: getUser
+#
+# Templates Engine and its Extensions
+#
+    templating:
+        class: R2\Templating\PhpEngine
+        arguments:
+            -
+                template_dir: "%root_dir%/views"
+                template_ext: ".html.php"
+                extensions:
+                    - "@tpl_standard_extension"
+                    - "@tpl_routing_extension"
+
+    tpl_standard_extension:
+        class: R2\Templating\Extensions\Standard
+        arguments: ["@user", "@i18n", "%languages%", "%default_lang%"]
+
+    tpl_routing_extension:
+        class: R2\Templating\Extensions\Routing
+        arguments: ["@router", "@request"]

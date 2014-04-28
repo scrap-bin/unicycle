@@ -1,0 +1,13 @@
+routes:
+
+    homepage:
+        path: /
+        controller: R2AppBundle:FrontPage:index
+
+    login:
+        path: /login
+        controller: R2AppBundle:Profile:login
+
+    logout:
+        path: /logout
+        controller: R2AppBundle:Profile:logout

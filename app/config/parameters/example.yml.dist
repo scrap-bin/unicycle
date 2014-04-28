@@ -7,13 +7,21 @@ parameters:
     default_lang: en
     fallback_lang: en
 
-    dbal_class: R2\DBAL\PDOMySQL
-    
+    db_class: R2\DBAL\PDOMySQL
     db_params:
-        host:         localhost
-        username:     root
-        password:     ~
-        dbname:       test
-        prefix:       test_
-        socket:       ~
-        persistent:   false
+        -
+            host:         localhost
+            username:     root
+            password:     ~
+            dbname:       test
+            prefix:       test_
+            socket:       ~
+            persistent:   false
+
+    provider_class: R2\Auth\BasicAuthProvider
+    provider_params:
+        - R2\Model\User
+        -
+            1: { username: ryan,  password: ryanpass, group: 4 }
+            2: { username: admin, password: kitten,   group: 1 }
+            3: { username: mary,  password: ololo,    group: 2 }

@@ -9,14 +9,12 @@ class Controller implements ContainerAwareInterface
 {
     /** @var ContainerInterface */
     protected $container;
-    /** @var \R2\Translation\TranslatorInterface */
+    /** @var R2\Translation\TranslatorInterface */
     protected $i18n;
-    /** @var \R2\Security\UserInterface */
+    /** @var R2\Security\UserInterface */
     protected $user;
-    /** @var \R2\ORM\EntityManagerInterface */
+    /** @var R2\ORM\EntityManagerInterface */
     protected $entityManager;
-    /** @var \R2\Model\LookupHelper */
-    protected $lookup;
 
     /**
      * Sets the Container associated with this Controller.
@@ -28,11 +26,11 @@ class Controller implements ContainerAwareInterface
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->container = $container;
+        $this->container     = $container;
         $this->i18n          = $container->get('i18n');
-//        $this->user          = $container->get('user');
+        $this->user          = $container->get('user');
         $this->entityManager = $container->get('entity_manager');
-//        $this->lookup        = $container->get('lookup_helper');
+
         return $this;
     }
 

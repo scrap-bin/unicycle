@@ -2,3 +2,9 @@ imports:
     - parameters/%environment%.yml
     - security.yml
     - services.yml
+    - services.yml
+    - routing.yml
+
+synonyms:
+    R2AppBundle: R2\Application\Controller
+    routes: routes
