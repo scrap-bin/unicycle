@@ -22,9 +22,9 @@ class UserController extends Controller
         $up = $this->get('user_provider');
         $redirectUrl = $this->getAfterLoginUrl();
         if (!$this->user->hasRole('ROLE_USER')) {
+            // weird! but working separation basic auth and others
             if ($up instanceof HeaderAuthProviderInterface) {
                 $up->authenticate();
-
                 return;
             }
             $this->render('User/login', ['redirect_url' => $redirectUrl]);
@@ -40,15 +40,15 @@ class UserController extends Controller
     public function loginCheckAction($matches)
     {
         $form = $this->collectPostForm(['username', 'password', 'redirect_url', 'save_pass']);
-        /* @var $up \R2\Security\UserProviderInterface */
+        /* @var $up R2\Security\UserProviderInterface */
         $up = $this->get('user_provider');
 
         try {
-            /* @var $validator \R2\Validator\Validator */
+            /* @var $validator R2\Validator\Validator */
 //            $validator = $this->get('validator');
 //            $errors = $validator->validate($form, 'login');
             if (empty($errors)) {
-                /* @var $user \R2\Security\Userinterface */
+                /* @var $user R2\Security\Userinterface */
                 $newUser = $up->loadUserByUsernameAndPassword($form['username'], $form['password']);
                 $authorized = true;
             }
@@ -59,7 +59,7 @@ class UserController extends Controller
         if (!empty($authorized)) {
             $expire = time() + (!empty($form['save_pass']) ? 1209600 : 1800);
             $up->rememberUser($newUser, $expire);
-            $this->redirect($form['redirect_url'] ?: $this->get('router')->url('homepage'));
+            $this->redirect($form['redirect_url'] ?: $this->getAfterLoginUrl());
         }
         $this->render('User/login', compact('errors') + $form);
     }
@@ -71,8 +71,8 @@ class UserController extends Controller
         $request = $this->get('request');
         $link = $router->url('homepage');
         if ($matches['token'] === $this->user->getCsrfToken()) {
+            // weird! but working separation basic auth and others
             if ($up instanceof HeaderAuthProviderInterface) {
-                // weird! should be implemented in HeaderAuthProviderInterface
                 $link = $request->getScheme().'://log:out@'.$request->getHost().$request->getBaseUrl().$link;
             } else {
                 $up->rememberUser($up->loadAnonymousUser(), time() + 31536000);
