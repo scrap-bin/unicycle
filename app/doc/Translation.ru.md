@@ -48,5 +48,5 @@ services:
     i18n:
         class: R2\Translation\Translator
         arguments: ["@i18n_loader", "%fallback_lang%"]
-        settings: { language: ["%default_lang%"] }
+        settings: { setLocale: ["%default_lang%"] }
 ```
