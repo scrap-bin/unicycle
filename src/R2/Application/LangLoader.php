@@ -15,7 +15,7 @@ class LangLoader implements I18nLoaderInterface
 
     /**
      * Constructor.
-     * 
+     *
      * @param string $localeDir
      * @param string $cacheDir
      */
@@ -27,10 +27,10 @@ class LangLoader implements I18nLoaderInterface
 
     /**
      * Load domain translations.
-     * 
+     *
      * @param string $locale
      * @param string $domain
-     * 
+     *
      * @return mixed
      */
     public function load($locale, $domain)
@@ -42,10 +42,10 @@ class LangLoader implements I18nLoaderInterface
 
     /**
      * Checks if domain translations exist.
-     * 
+     *
      * @param string $locale
      * @param string $domain
-     * 
+     *
      * @return Boolean
      */
     public function exists($locale, $domain)

@@ -1,8 +1,8 @@
 INSERT INTO `:p_users` 
-(`id`, `username`, `password`, `email`, `realname`, `created`, `updated`) VALUES
-(1, 'guest', 'guest', 'guest', 'guest', '2014-03-01 12:00:00', '2014-03-01 12:00:00'),
-(2, 'admin', sha1('password'), 'admin@example.com', '', '2014-03-01 12:15:00', '2014-03-01 12:15:00'),
-(3, 'artoodetoo', sha1('password'), 'artoodetoo@example.com', 'R2-D2', '2014-03-01 12:25:00', '2014-03-01 12:30:00');
+(`id`, `username`, `password`, `group_id`, `email`, `realname`, `created`, `updated`) VALUES
+(1, 'guest',      'guest', 'guest', 3, 'guest', '2014-03-01 12:00:00', '2014-03-01 12:00:00'),
+(2, 'admin',      sha1('password'), 1, 'admin@example.com', '', '2014-03-01 12:15:00', '2014-03-01 12:15:00'),
+(3, 'artoodetoo', sha1('password'), 4, 'artoodetoo@example.com', 'R2-D2', '2014-03-01 12:25:00', '2014-03-01 12:30:00');
 
 INSERT INTO `:p_user_socials`
 (`user_id`, `provider`, `provider_uid`, `email`, `display_name`, `first_name`, `last_name`, `profile_url`, `photo_url`, `created`) VALUES

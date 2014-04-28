@@ -3,9 +3,8 @@ services:
 # Database Abstraction and Data Mapper
 #
     db:
-        class: "%dbal_class%"
-        arguments:
-            - "%db_params%"
+        class: "%db_class%"
+        arguments: "%db_params%"
 
     entity_manager:
         class: R2\ORM\EntityManager

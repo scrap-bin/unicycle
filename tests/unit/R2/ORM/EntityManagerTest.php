@@ -37,8 +37,11 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         }
         $time = date('Y-m-d H:i:s');
         $class = self::$entityClass;
+        /* @var $o R2\Model\User */
         $o = new $class();
         $o->username = $randomName;
+        $o->password = $randomName;
+        $o->groupId  = 4;
         $o->email = $randomName.'@example.com';
         $o->realname = $randomName;
         $o->created = $o->undated = $time;
@@ -80,13 +83,11 @@ class EntityManagerTest extends \PHPUnit_Framework_TestCase
         $num = $this->getNumRows();
 
         $this->insertRow();
-        self::$em->rollback();
-        self::$em->beginTransaction();
+        self::$em->rollback()->beginTransaction();
         $this->assertEquals($num, $this->getNumRows());
 
         $this->insertRow();
-        self::$em->commit();
-        self::$em->beginTransaction();
+        self::$em->commit()->beginTransaction();
         $this->assertEquals($num + 1, $this->getNumRows());
     }
 

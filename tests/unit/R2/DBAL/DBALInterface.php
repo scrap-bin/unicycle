@@ -22,7 +22,8 @@ class DBALInterface extends \PHPUnit_Framework_TestCase
             ->loadFixtures();
         // Compute class name and check if it DBALInterface
         $class = 'R2\\DBAL'.\substr(\strrchr(\get_called_class(), '\\'), 0, -4);
-        self::$dbh = new $class($container->getParameter('parameters.db_params'));
+        $config = $container->getParameter('parameters.db_params')[0];
+        self::$dbh = new $class($config);
         if (!is_a(self::$dbh, 'R2\\DBAL\\DBALInterface')) {
             throw new \Exception("Class {$class} is not DBALInterface");
         }

@@ -9,7 +9,7 @@ class DBALCommand extends CliApplication
     public function dropSchema()
     {
         try {
-            $prefix = $this->container->getParameter('parameters.db_params.prefix');
+            $prefix = $this->db->getPrefix();
             foreach ($this->db->query("SHOW FULL TABLES")->fetchAssocAll() as $row) {
                 $tableName = current($row);
                 $tableType = next($row);

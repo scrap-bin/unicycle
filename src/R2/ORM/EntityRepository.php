@@ -117,8 +117,8 @@ class EntityRepository implements EntityRepositoryInterface
 
     /**
      * Count objects for a set of criteria.
-     * @param  array  $criteria The criteria.
-     * @return int    The count
+     * @param  array $criteria The criteria.
+     * @return int   The count
      */
     public function count(array $criteria)
     {

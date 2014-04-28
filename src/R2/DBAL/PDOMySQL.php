@@ -73,6 +73,14 @@ class PDOMySQL implements DBALInterface
     }
 
     /**
+     * Gets table prefix.
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
      * (Lazy) connect.
      *
      * @throws Exception

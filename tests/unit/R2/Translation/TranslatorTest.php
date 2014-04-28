@@ -23,7 +23,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
                     'hello_world' => 'Привет Мир!',
                 ],
             ],
-            
+
         ];
         $loader = $this->getMock('R2\\Translation\\LoaderInterface');
         $loader->method('load')

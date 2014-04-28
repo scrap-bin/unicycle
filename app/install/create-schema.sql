@@ -4,6 +4,7 @@ CREATE TABLE `:p_users` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `username` varchar(25) NOT NULL,
   `password` varchar(40) NOT NULL,
+  `group_id` int(10) NOT NULL,
   `email` varchar(200) NOT NULL,
   `realname` varchar(200) NOT NULL,
   `created` timestamp NOT NULL,
