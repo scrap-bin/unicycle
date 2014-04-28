@@ -21,16 +21,17 @@ class UserController extends Controller
         /* @var R2\Security\UserProviderInterface */
         $up = $this->get('user_provider');
         $redirectUrl = $this->getAfterLoginUrl();
-        if (!$this->user->hasRole('ROLE_USER')) {
-            // weird! but working separation basic auth and others
-            if ($up instanceof HeaderAuthProviderInterface) {
-                $up->authenticate();
-                return;
-            }
-            $this->render('User/login', ['redirect_url' => $redirectUrl]);
-        } else {
+        // Is already logged in?
+        if ($this->user->hasRole('ROLE_USER')) {
             $this->redirect($redirectUrl);
         }
+        // weird! but working separation basic auth and others
+        if ($up instanceof HeaderAuthProviderInterface) {
+            $up->authenticate();
+            return;
+        }
+        
+        $this->render('User/login', ['redirect_url' => $redirectUrl]);
     }
 
     /**
@@ -61,14 +62,16 @@ class UserController extends Controller
             $up->rememberUser($newUser, $expire);
             $this->redirect($form['redirect_url'] ?: $this->getAfterLoginUrl());
         }
+        
         $this->render('User/login', compact('errors') + $form);
     }
 
     public function logoutAction($matches)
     {
-        $up = $this->get('user_provider');
-        $router = $this->get('router');
+        $up      = $this->get('user_provider');
+        $router  = $this->get('router');
         $request = $this->get('request');
+        
         $link = $router->url('homepage');
         if ($matches['token'] === $this->user->getCsrfToken()) {
             // weird! but working separation basic auth and others
