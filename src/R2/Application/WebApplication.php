@@ -43,9 +43,11 @@ class WebApplication extends Controller
     }
 
     /**
-     * Route request to appropriate controller action
-     * @param  string  $pathInfo      Request URI (without base prefix)
-     * @param  string  $requestMethod Request method
+     * Route request to appropriate controller action.
+     *
+     * @param string $pathInfo      Request URI (without base prefix)
+     * @param string $requestMethod Request method
+     *
      * @return boolean Success
      */
     private function doRoute($pathInfo, $requestMethod)
@@ -75,9 +77,11 @@ class WebApplication extends Controller
     }
 
     /**
-     * Check given URI against defined access list
-     * @param  string  $pathInfo Request URI (without base prefix)
-     * @param  array   $roles    User roles
+     * Checks given URI against defined access list.
+     *
+     * @param string $pathInfo Request URI (without base prefix)
+     * @param array  $roles    User roles
+     *
      * @return boolean Do user permit this?
      */
     private function checkAccess($pathInfo, array $roles, array $accessRules)

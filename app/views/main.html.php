@@ -2,8 +2,10 @@
 
 header('Content-type: text/html; charset=utf-8');
 
-$user = user();
-$authenticated = $user->hasRole('ROLE_USER');
+$_currentUser = user();
+$_authenticated = $_currentUser->hasRole('ROLE_USER');
+//$_currentLanguage = currentLanguage();
+//$_languages = languageDescriptions();
 
 ?>
 <!doctype html>
@@ -14,8 +16,8 @@ $authenticated = $user->hasRole('ROLE_USER');
 </head>
 <body>
 <div class="header">
-    <span>Hello <strong><?= e($user->username) ?>!</strong></span>
-<?php if ($authenticated): ?><a href="<?= url('logout') ?>">Logout</a>
+    <span>Hello <strong><?= e($_currentUser->username) ?>!</strong></span>
+<?php if ($_authenticated): ?><a href="<?= url('logout', ['token' => $_currentUser->getCsrfToken()]) ?>">Logout</a>
 <?php else: ?><a href="<?= url('login') ?>">Login</a>
 <?php endif; ?>
     <hr>

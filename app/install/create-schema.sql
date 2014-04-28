@@ -7,6 +7,7 @@ CREATE TABLE `:p_users` (
   `group_id` int(10) NOT NULL,
   `email` varchar(200) NOT NULL,
   `realname` varchar(200) NOT NULL,
+  `language` varchar(25) NOT NULL DEFAULT 'en',
   `created` timestamp NOT NULL,
   `updated` timestamp NOT NULL,
   PRIMARY KEY (`id`)

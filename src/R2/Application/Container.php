@@ -218,11 +218,12 @@ class Container implements ContainerInterface, ServiceFactoryInterface
         $matches = null;
         if (is_string($value) && strpos($value, '%') !== false) {
             if (preg_match('~^%([a-z_0-9.]+)%$~', $value, $matches)) {
-                return $this->substitute($matches);
+                $value = $this->substitute($matches);
             } else {
                 $value = preg_replace_callback('~%([a-z_0-9.]+)%~', [$this, 'substitute'], $value);
             }
-        } elseif (is_string($value) && strpos($value, '@') === 0) {
+        }
+        if (is_string($value) && strpos($value, '@') === 0) {
             return $this->get(substr($value, 1));
         } elseif (is_array($value)) {
             foreach ($value as &$v) {

@@ -2,20 +2,17 @@
 
 namespace R2\Model;
 
-class User
-{
-    const GROUP_UNVERIFIED  = 0;
-    const GROUP_ADMIN       = 1;
-    const GROUP_MOD         = 2;
-    const GROUP_GUEST       = 3;
-    const GROUP_USER        = 4;
+use R2\Security\UserInterface;
 
+class User implements UserInterface
+{
     public $id       = 0;
     public $username = 'guest';
     public $password = '';
     public $groupId  = self::GROUP_GUEST;
     public $email    = '';
     public $realname = '';
+    public $language = 'en';
     public $created  = 0;
     public $updated  = 0;
 
@@ -41,5 +38,41 @@ class User
         $roles = $this->getRoles();
 
         return in_array($role, $roles);
+    }
+
+    /**
+     * Returns the password used to authenticate the user.
+     * This should be the encoded password.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Returns the user preffered locale.
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->language;
+    }
+
+    public function getCsrfToken()
+    {
+        // weird! implicitly depends on superglobal
+        return sha1($this->id.sha1(filter_input(INPUT_SERVER, 'REMOTE_ADDR')));
     }
 }

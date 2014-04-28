@@ -38,7 +38,7 @@ services:
 
     user:
         factory_service: "@user_provider"
-        method: getUser
+        method: loadIdentifiedUser
 #
 # Templates Engine and its Extensions
 #

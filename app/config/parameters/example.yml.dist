@@ -17,11 +17,27 @@ parameters:
             prefix:       test_
             socket:       ~
             persistent:   false
-
-    provider_class: R2\Auth\BasicAuthProvider
+#
+# Basic Auth
+#
+    #provider_class: R2\Security\BasicAuthProvider
+    #provider_params:
+    #    - R2\Model\User
+    #    -
+    #        - { id: 1, username: ryan,  password: ryanpass, group: 4 }
+    #        - { id: 2, username: admin, password: kitten,   group: 1 }
+    #        - { id: 3, username: mary,  password: ololo,    group: 2 }
+#
+# FluxBB Auth
+#
+    provider_class: R2\Security\FluxUserProvider
     provider_params:
+        - "@entity_manager"
         - R2\Model\User
         -
-            1: { username: ryan,  password: ryanpass, group: 4 }
-            2: { username: admin, password: kitten,   group: 1 }
-            3: { username: mary,  password: ololo,    group: 2 }
+            cookie_name:   'auth'
+            cookie_domain: ''
+            cookie_path:   '/'
+            cookie_secure: 0
+            cookie_seed:   'ChangeIt'
+
