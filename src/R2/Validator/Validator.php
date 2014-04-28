@@ -59,7 +59,7 @@ class Validator
                         $message = isset($rules[$name]['message'])
                             ? $rules[$name]['message']
                             : 'Wrong '.$name;
-                        $errors[] = $this->translator->t($message, 'validators');
+                        $errors[$name] = $this->translator->t($message, 'validators');
                     }
                 }
             }
