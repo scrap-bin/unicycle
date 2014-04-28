@@ -1,0 +1,31 @@
+#
+# Section "rules" contains custom validation rules in addition to pre-defined rules.
+# Section "groups" responsible to map properties to rules.
+# Group have an arbitrary name. By default validator uses entity class name as group name.
+#
+validation:
+
+    rules:
+        NotGuest: '/^(?!guest$).*$/i'
+        ValidCharsOnly: '/^[^\[\]''"@]+$/'
+
+    groups:
+
+        login:
+            username:  { NotBlank: ~, message: 'Invalid username' }
+            password:  { NotBlank: ~, message: 'Invalid password' }
+
+        register:
+            username:  { MinLength: 2, MaxLength: 25, NotGuest: ~, ValidCharsOnly: ~, message: 'Bad username' }
+            password:  { MinLength: 6, message: 'Bad password' }
+            password2: { TheSame: password, message: 'Pass not match' }
+            email:     { Email: ~, message: 'Invalid email' }
+
+        personal:
+            realname:  { MaxLength: 40 }
+            title:     { MaxLength: 50 }
+            location:  { MaxLength: 30 }
+
+        user_site:
+            site_name: { NotBlank: ~, MaxLength: 200, message: 'Invalid site name' }
+            site_url:  { NotBlank: ~, Url: ~, MaxLength: 200, message: 'Invalid site URL' }

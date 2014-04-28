@@ -2,9 +2,11 @@ imports:
     - parameters/%environment%.yml
     - security.yml
     - services.yml
-    - services.yml
+    - validation.yml
     - routing.yml
 
 synonyms:
     R2AppBundle: R2\Application\Controller
     routes: routes
+    validation_rules: validation.rules
+    validation_groups: validation.groups

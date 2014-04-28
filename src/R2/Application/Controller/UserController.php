@@ -28,9 +28,10 @@ class UserController extends Controller
         // weird! but working separation basic auth and others
         if ($up instanceof HeaderAuthProviderInterface) {
             $up->authenticate();
+
             return;
         }
-        
+
         $this->render('User/login', ['redirect_url' => $redirectUrl]);
     }
 
@@ -46,8 +47,8 @@ class UserController extends Controller
 
         try {
             /* @var $validator R2\Validator\Validator */
-//            $validator = $this->get('validator');
-//            $errors = $validator->validate($form, 'login');
+            $validator = $this->get('validator');
+            $errors = $validator->validate($form, 'login');
             if (empty($errors)) {
                 /* @var $user R2\Security\Userinterface */
                 $newUser = $up->loadUserByUsernameAndPassword($form['username'], $form['password']);
@@ -62,7 +63,7 @@ class UserController extends Controller
             $up->rememberUser($newUser, $expire);
             $this->redirect($form['redirect_url'] ?: $this->getAfterLoginUrl());
         }
-        
+
         $this->render('User/login', compact('errors') + $form);
     }
 
@@ -71,7 +72,7 @@ class UserController extends Controller
         $up      = $this->get('user_provider');
         $router  = $this->get('router');
         $request = $this->get('request');
-        
+
         $link = $router->url('homepage');
         if ($matches['token'] === $this->user->getCsrfToken()) {
             // weird! but working separation basic auth and others

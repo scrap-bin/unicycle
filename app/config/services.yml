@@ -59,3 +59,9 @@ services:
     tpl_routing_extension:
         class: R2\Templating\Extensions\Routing
         arguments: ["@router", "@request"]
+#
+# Data validation
+#
+    validator:
+        class: R2\Validator\Validator
+        arguments: ["%validation_rules%", "%validation_groups%", "@i18n"]
