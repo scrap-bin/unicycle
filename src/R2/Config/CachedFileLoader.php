@@ -29,7 +29,7 @@ class CachedFileLoader extends SerializedFileLoader
      *
      * @param string $resource
      *
-     * @return Boolean
+     * @return boolean
      */
     public function supports($resource)
     {
