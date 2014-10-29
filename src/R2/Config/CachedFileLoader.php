@@ -2,6 +2,9 @@
 
 namespace R2\Config;
 
+/**
+ * Wrapper to cache other loader(s) daa
+ */
 class CachedFileLoader extends SerializedFileLoader
 {
     private $loaders;
