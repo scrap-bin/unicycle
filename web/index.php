@@ -10,7 +10,7 @@ require __DIR__.'/../src/bootstrap.php';
 $container = new Container(
     new CachedFileLoader(new YamlFileLoader(), __DIR__.'/../app/cache/%s.ser'),
     __DIR__.'/../app/config/config.yml',
-    filter_input(INPUT_SERVER, 'APPLICATION_ENV')
+    filter_input(INPUT_SERVER, 'APPLICATION_ENV') ?: 'production'
 );
 (new WebApplication())
     ->setContainer($container)
