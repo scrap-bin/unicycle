@@ -66,6 +66,7 @@ class CachedFileLoader extends SerializedFileLoader
             }
         }
 
+        $result = false;false;
         if ($isUpToDate) {
             $result = parent::load($cacheFileName);
         } else {
