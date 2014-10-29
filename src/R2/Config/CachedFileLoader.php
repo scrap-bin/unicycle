@@ -75,7 +75,9 @@ class CachedFileLoader extends SerializedFileLoader
                     break;
                 }
             }
-            file_put_contents($cacheFileName, serialize($result));
+            if ($result !== false) {
+                file_put_contents($cacheFileName, serialize($result));
+            }
         }
 
         $this->fileName = $resource;
