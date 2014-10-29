@@ -3,7 +3,7 @@
 namespace R2\Config;
 
 /**
- * Wrapper to cache other loader(s)
+ * Wrapper to cache other loader(s).
  */
 class CachedFileLoader extends SerializedFileLoader
 {
