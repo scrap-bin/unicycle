@@ -1,5 +1,7 @@
+/*
+ * Main user table
+ */
 DROP TABLE IF EXISTS `:p_users`;
-
 CREATE TABLE `:p_users` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `username` varchar(25) NOT NULL,
@@ -13,6 +15,10 @@ CREATE TABLE `:p_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8;
 
+
+/*
+ * User's social net links
+ */
 DROP TABLE IF EXISTS `:p_user_socials`;
 
 CREATE TABLE `:p_user_socials` (
