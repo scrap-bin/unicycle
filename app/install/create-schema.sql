@@ -28,5 +28,5 @@ CREATE TABLE `:p_user_socials` (
   `created` timestamp NOT NULL,
   PRIMARY KEY (`user_id`, `provider`),
   KEY (`provider`, `provider_uid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB CHARSET=utf8;
 
