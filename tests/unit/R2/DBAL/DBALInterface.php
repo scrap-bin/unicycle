@@ -64,10 +64,11 @@ class DBALInterface extends \PHPUnit_Framework_TestCase
 
         return self::$dbh->query(
             "INSERT INTO `:p_users` "
-            ."(`username`, `password`, `email`, `realname`, `created`, `updated`) VALUES "
-            ."(:name, SHA1('password'), :email, 'New User', :time, :time)",
+            ."(`username`, `password`, `group_id`, `email`, `realname`, `created`, `updated`) VALUES "
+            ."(:name, SHA1('password'), :gid, :email, 'New User', :time, :time)",
             [
                 'name'  => $randomName,
+                'gid'   => 4,
                 'email' => $randomName.'@example.com',
                 'time'  => $time
             ]
